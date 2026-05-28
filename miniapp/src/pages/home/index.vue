@@ -2,39 +2,70 @@
   <view class="page">
     <view class="hero">
       <text class="title">到家服务</text>
-      <text class="subtitle">月嫂、保姆、育婴、养老与保洁服务</text>
+      <text class="subtitle">月嫂、保姆、育婴师、养老与清洁服务</text>
     </view>
 
     <view class="section">
-      <view class="section-title">服务分类</view>
+      <view class="section-head">
+        <text class="section-title">服务分类</text>
+      </view>
       <view class="grid">
-        <view v-for="item in categories" :key="item" class="grid-item">
-          <view class="dot"></view>
-          <text>{{ item }}</text>
+        <view v-for="item in categories" :key="item.id" class="grid-item" @tap="openCategory(item.id)">
+          <view class="dot">{{ item.name.slice(0, 1) }}</view>
+          <text>{{ item.name }}</text>
         </view>
       </view>
     </view>
 
-    <view class="section">
-      <view class="section-title">团购活动</view>
-      <view class="product">
-        <text class="product-title">深度保洁新人优惠</text>
-        <text class="price">¥429.00</text>
+    <view class="section" v-if="tips.length">
+      <view class="section-head">
+        <text class="section-title">签约动态</text>
       </view>
-      <view class="product">
-        <text class="product-title">老人陪护体验服务</text>
-        <text class="price">¥368.00</text>
+      <view v-for="tip in tips" :key="tip" class="notice">{{ tip }}</view>
+    </view>
+
+    <view class="section">
+      <view class="section-head">
+        <text class="section-title">团购推荐</text>
+      </view>
+      <view v-for="item in groupProducts" :key="item.id" class="product">
+        <view>
+          <text class="product-title">{{ item.title }}</text>
+          <text class="product-sub">可单独购买，也可发起拼团</text>
+        </view>
+        <text class="price">¥{{ item.groupPrice }}</text>
       </view>
     </view>
+
+    <button class="contact" open-type="contact">联系客服</button>
   </view>
 </template>
 
 <script>
+import { getHome } from '@/services/api'
+
 export default {
   data() {
     return {
-      categories: ['月嫂', '保姆', '育婴师', '居家养老', '保洁师', '钟点工', '成长陪伴师', '家电清洗师'],
+      categories: [],
+      tips: [],
+      groupProducts: [],
     }
+  },
+  onLoad() {
+    this.loadHome()
+  },
+  methods: {
+    async loadHome() {
+      const res = await getHome()
+      this.categories = res.data.categories || []
+      this.tips = res.data.signSuccessTips || []
+      this.groupProducts = res.data.groupProducts || []
+    },
+    openCategory(id) {
+      uni.setStorageSync('staffCategoryId', id)
+      uni.switchTab({ url: '/pages/staff/index' })
+    },
   },
 }
 </script>
@@ -47,9 +78,10 @@ export default {
 }
 
 .hero {
-  padding: 36rpx;
-  border-radius: 20rpx;
-  background: linear-gradient(135deg, #fff1f3, #fff8e8);
+  padding: 38rpx;
+  border-radius: 18rpx;
+  background: #fff;
+  border-left: 8rpx solid #ef3f5f;
 }
 
 .title {
@@ -73,8 +105,14 @@ export default {
   background: #ffffff;
 }
 
-.section-title {
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 22rpx;
+}
+
+.section-title {
   color: #20242c;
   font-size: 32rpx;
   font-weight: 700;
@@ -98,15 +136,32 @@ export default {
 }
 
 .dot {
-  width: 42rpx;
-  height: 42rpx;
+  display: flex;
+  width: 48rpx;
+  height: 48rpx;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   background: #ef3f5f;
+  color: #fff;
+  font-size: 24rpx;
+}
+
+.notice {
+  padding: 18rpx 0;
+  border-top: 1px solid #edf0f3;
+  color: #525a66;
+  font-size: 26rpx;
+}
+
+.notice:first-of-type {
+  border-top: 0;
 }
 
 .product {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 24rpx 0;
   border-top: 1px solid #edf0f3;
 }
@@ -115,14 +170,39 @@ export default {
   border-top: 0;
 }
 
+.product-title,
+.product-sub {
+  display: block;
+}
+
 .product-title {
   color: #20242c;
   font-size: 28rpx;
+  font-weight: 600;
+}
+
+.product-sub {
+  margin-top: 8rpx;
+  color: #8a8f99;
+  font-size: 22rpx;
 }
 
 .price {
   color: #ef3f5f;
-  font-size: 28rpx;
+  font-size: 30rpx;
   font-weight: 700;
+}
+
+.contact {
+  position: fixed;
+  right: 24rpx;
+  bottom: 140rpx;
+  width: 172rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  border-radius: 999rpx;
+  background: #20242c;
+  color: #fff;
+  font-size: 24rpx;
 }
 </style>

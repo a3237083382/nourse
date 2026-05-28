@@ -19,6 +19,48 @@
       }
     },
     {
+      "path": "pages/staff/detail",
+      "style": {
+        "navigationBarTitleText": "阿姨详情"
+      }
+    },
+    {
+      "path": "pages/demand/form",
+      "style": {
+        "navigationBarTitleText": "发布需求"
+      }
+    },
+    {
+      "path": "pages/demand/list",
+      "style": {
+        "navigationBarTitleText": "我的需求"
+      }
+    },
+    {
+      "path": "pages/demand/detail",
+      "style": {
+        "navigationBarTitleText": "需求详情"
+      }
+    },
+    {
+      "path": "pages/interview/form",
+      "style": {
+        "navigationBarTitleText": "预约面试"
+      }
+    },
+    {
+      "path": "pages/interview/list",
+      "style": {
+        "navigationBarTitleText": "我的邀约"
+      }
+    },
+    {
+      "path": "pages/interview/detail",
+      "style": {
+        "navigationBarTitleText": "邀约详情"
+      }
+    },
+    {
       "path": "pages/message/index",
       "style": {
         "navigationBarTitleText": "消息"

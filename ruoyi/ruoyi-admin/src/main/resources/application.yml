@@ -113,6 +113,11 @@ security:
     - /**/*.js
     - /favicon.ico
     - /error
+    - /api/app/auth/mock-login
+    - /api/app/home
+    - /api/app/categories
+    - /api/app/staff
+    - /api/app/staff/*
     - /*/api-docs
     - /*/api-docs/**
     - /warm-flow-ui/config

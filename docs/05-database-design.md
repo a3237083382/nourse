@@ -106,7 +106,18 @@
 | end_date | date | 结束日期 |
 | description | text | 经历描述 |
 
-### 2.8 用户需求表 `user_demand`
+### 2.8 用户服务人员收藏表 `user_staff_favorite`
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| id | bigint | 主键 |
+| user_id | bigint | 用户 ID |
+| staff_id | bigint | 服务人员 ID |
+| created_at | datetime | 创建时间 |
+| updated_at | datetime | 更新时间 |
+| deleted | tinyint | 逻辑删除 |
+
+### 2.9 用户需求表 `user_demand`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -142,7 +153,7 @@
 - SIGNED：已签约。
 - CLOSED：已关闭。
 
-### 2.9 推荐阿姨表 `demand_recommendation`
+### 2.10 推荐阿姨表 `demand_recommendation`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -160,7 +171,7 @@
 - INTERVIEWED：已预约面试。
 - IGNORED：已忽略。
 
-### 2.10 预约面试表 `interview_appointment`
+### 2.11 预约面试表 `interview_appointment`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -181,7 +192,7 @@
 - COMPLETED：已完成。
 - CANCELED：已取消。
 
-### 2.11 合同表 `contract`
+### 2.12 合同表 `contract`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -197,7 +208,7 @@
 | signed_at | datetime | 签署时间 |
 | terminated_at | datetime | 终止时间 |
 
-### 2.12 服务订单表 `service_order`
+### 2.13 服务订单表 `service_order`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -220,7 +231,7 @@
 - COMPLETED：已完成。
 - TRANSFERRED：已转让。
 
-### 2.13 团购商品表 `group_product`
+### 2.14 团购商品表 `group_product`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -238,7 +249,7 @@
 | description | text | 产品介绍 |
 | status | varchar(32) | DRAFT, ONLINE, OFFLINE |
 
-### 2.14 拼团表 `group_team`
+### 2.15 拼团表 `group_team`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -257,7 +268,7 @@
 - FAILED：拼团失败。
 - CANCELED：已取消。
 
-### 2.15 团购订单表 `group_order`
+### 2.16 团购订单表 `group_order`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -281,7 +292,7 @@
 - EXPIRED：到期。
 - AFTER_SALE：售后。
 
-### 2.16 内容配置表 `content_config`
+### 2.17 内容配置表 `content_config`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -293,7 +304,7 @@
 | sort_no | int | 排序 |
 | enabled | tinyint | 是否启用 |
 
-### 2.17 文件表 `file_asset`
+### 2.18 文件表 `file_asset`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -305,7 +316,7 @@
 | size_bytes | bigint | 文件大小 |
 | usage_type | varchar(64) | AVATAR, CERTIFICATE, CONTRACT, PRODUCT, BANNER |
 
-### 2.18 系统消息表 `system_message`
+### 2.19 系统消息表 `system_message`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |

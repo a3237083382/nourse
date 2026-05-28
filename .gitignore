@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+target/
+unpackage/
+.vite/
+
+# Logs and runtime files
+logs/
+*.log
+*.pid
+
+# Local environment and IDE files
+.env
+.env.*
+!.env.example
+!ruoyi-ui/.env.development
+!ruoyi-ui/.env.production
+.idea/
+.vscode/
+*.iml
+
+# Local screenshots, recordings, and analysis output
+/analysis_frames/
+/current-*.png
+/ruoyi-ui-login*.png
+*.mp4
+
+# Nested git metadata backups kept when converting cloned projects into this monorepo
+/.embedded-git-backups/
+
+# OS files
+.DS_Store
+Thumbs.db

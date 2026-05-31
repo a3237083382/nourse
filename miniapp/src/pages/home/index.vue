@@ -5,6 +5,18 @@
       <text class="subtitle">月嫂、保姆、育婴师、养老与清洁服务</text>
     </view>
 
+    <swiper v-if="banners.length" class="banner" circular autoplay indicator-dots>
+      <swiper-item v-for="item in banners" :key="item.id">
+        <view class="banner-item">
+          <image v-if="item.imageUrl" class="banner-image" :src="item.imageUrl" mode="aspectFill" />
+          <view class="banner-text">
+            <text class="banner-title">{{ item.title }}</text>
+            <text v-if="item.content" class="banner-desc">{{ item.content }}</text>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+
     <view class="section">
       <view class="section-head">
         <text class="section-title">服务分类</text>
@@ -27,8 +39,9 @@
     <view class="section">
       <view class="section-head">
         <text class="section-title">团购推荐</text>
+        <text class="more" @tap="openGroupList">更多</text>
       </view>
-      <view v-for="item in groupProducts" :key="item.id" class="product">
+      <view v-for="item in groupProducts" :key="item.id" class="product" @tap="openGroupDetail(item.id)">
         <view>
           <text class="product-title">{{ item.title }}</text>
           <text class="product-sub">可单独购买，也可发起拼团</text>
@@ -48,6 +61,7 @@ export default {
   data() {
     return {
       categories: [],
+      banners: [],
       tips: [],
       groupProducts: [],
     }
@@ -58,6 +72,7 @@ export default {
   methods: {
     async loadHome() {
       const res = await getHome()
+      this.banners = res.data.banners || []
       this.categories = res.data.categories || []
       this.tips = res.data.signSuccessTips || []
       this.groupProducts = res.data.groupProducts || []
@@ -66,6 +81,12 @@ export default {
       uni.setStorageSync('staffCategoryId', id)
       uni.switchTab({ url: '/pages/staff/index' })
     },
+    openGroupList() {
+      uni.navigateTo({ url: '/pages/group/list' })
+    },
+    openGroupDetail(id) {
+      uni.navigateTo({ url: `/pages/group/detail?id=${id}` })
+    },
   },
 }
 </script>
@@ -73,20 +94,61 @@ export default {
 <style>
 .page {
   min-height: 100vh;
-  background: #f6f7f9;
-  padding: 24rpx;
+  background: #f4f5f2;
+  padding: 24rpx 24rpx 36rpx;
 }
 
 .hero {
   padding: 38rpx;
-  border-radius: 18rpx;
-  background: #fff;
-  border-left: 8rpx solid #ef3f5f;
+  border-radius: 28rpx;
+  background: #20252b;
+  box-shadow: 0 18rpx 42rpx rgba(32, 37, 43, 0.16);
+}
+
+.banner {
+  height: 240rpx;
+  margin-top: 24rpx;
+  border-radius: 26rpx;
+  overflow: hidden;
+  background: #20242c;
+}
+
+.banner-item {
+  position: relative;
+  height: 240rpx;
+}
+
+.banner-image {
+  width: 100%;
+  height: 240rpx;
+}
+
+.banner-text {
+  position: absolute;
+  left: 24rpx;
+  right: 24rpx;
+  bottom: 24rpx;
+  color: #fff;
+}
+
+.banner-title,
+.banner-desc {
+  display: block;
+}
+
+.banner-title {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.banner-desc {
+  margin-top: 8rpx;
+  font-size: 24rpx;
 }
 
 .title {
   display: block;
-  color: #20242c;
+  color: #fff;
   font-size: 44rpx;
   font-weight: 700;
 }
@@ -94,15 +156,17 @@ export default {
 .subtitle {
   display: block;
   margin-top: 12rpx;
-  color: #6d7480;
+  color: rgba(255, 255, 255, 0.72);
   font-size: 26rpx;
 }
 
 .section {
   margin-top: 24rpx;
   padding: 28rpx;
-  border-radius: 16rpx;
+  border: 1px solid rgba(31, 37, 43, 0.05);
+  border-radius: 26rpx;
   background: #ffffff;
+  box-shadow: 0 12rpx 30rpx rgba(32, 38, 44, 0.05);
 }
 
 .section-head {
@@ -118,38 +182,49 @@ export default {
   font-weight: 700;
 }
 
+.more {
+  color: #e84d64;
+  font-size: 25rpx;
+  font-weight: 600;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 22rpx;
+  gap: 16rpx;
 }
 
 .grid-item {
   display: flex;
-  min-height: 112rpx;
+  min-height: 118rpx;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   gap: 10rpx;
+  border-radius: 20rpx;
+  background: #f7f8f5;
   color: #3b414c;
   font-size: 24rpx;
 }
 
 .dot {
   display: flex;
-  width: 48rpx;
-  height: 48rpx;
+  width: 52rpx;
+  height: 52rpx;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #ef3f5f;
+  background: #e84d64;
   color: #fff;
   font-size: 24rpx;
 }
 
 .notice {
-  padding: 18rpx 0;
+  margin-top: 14rpx;
+  padding: 18rpx 20rpx;
   border-top: 1px solid #edf0f3;
+  border-radius: 18rpx;
+  background: #f7f8f5;
   color: #525a66;
   font-size: 26rpx;
 }
@@ -162,12 +237,14 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24rpx 0;
-  border-top: 1px solid #edf0f3;
+  margin-top: 14rpx;
+  padding: 22rpx;
+  border-radius: 20rpx;
+  background: #f7f8f5;
 }
 
 .product:first-of-type {
-  border-top: 0;
+  margin-top: 0;
 }
 
 .product-title,
@@ -188,7 +265,7 @@ export default {
 }
 
 .price {
-  color: #ef3f5f;
+  color: #e84d64;
   font-size: 30rpx;
   font-weight: 700;
 }
@@ -200,9 +277,10 @@ export default {
   width: 172rpx;
   height: 64rpx;
   line-height: 64rpx;
-  border-radius: 999rpx;
+  border-radius: 18rpx;
   background: #20242c;
   color: #fff;
   font-size: 24rpx;
+  box-shadow: 0 12rpx 26rpx rgba(32, 37, 43, 0.18);
 }
 </style>

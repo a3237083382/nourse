@@ -3,6 +3,7 @@ package org.dromara.web.controller.admin;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.R;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.dromara.web.service.SystemMessageService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class AdminDemandController {
 
     private final JdbcTemplate jdbcTemplate;
+    private final SystemMessageService systemMessageService;
 
     @GetMapping
     public TableDataInfo<Map<String, Object>> list(
@@ -73,7 +75,7 @@ public class AdminDemandController {
             set audit_status = 'APPROVED', follow_status = 'TO_FOLLOW', updated_at = now()
             where id = ? and deleted = 0 and audit_status = 'PENDING'
             """, id);
-        createMessage(id, "需求审核通过", "你的需求已审核通过，平台将为你推荐合适的服务人员。", "DEMAND_APPROVED");
+        systemMessageService.createForDemand(id, "需求审核通过", "你的需求已审核通过，平台将为你推荐合适的服务人员。", "DEMAND_APPROVED");
         return R.ok();
     }
 
@@ -87,7 +89,7 @@ public class AdminDemandController {
             set audit_status = 'REJECTED', follow_status = 'CLOSED', updated_at = now()
             where id = ? and deleted = 0 and audit_status = 'PENDING'
             """, id);
-        createMessage(id, "需求审核未通过", reason, "DEMAND_REJECTED");
+        systemMessageService.createForDemand(id, "需求审核未通过", reason, "DEMAND_REJECTED");
         return R.ok();
     }
 
@@ -145,7 +147,7 @@ public class AdminDemandController {
         }
 
         jdbcTemplate.update("update user_demand set follow_status = 'MATCHED', updated_at = now() where id = ?", id);
-        createMessage(id, "平台已推荐阿姨", "平台已为你的需求推荐合适的服务人员，请进入我的需求查看。", "DEMAND_RECOMMENDATION");
+        systemMessageService.createForDemand(id, "平台已推荐阿姨", "平台已为你的需求推荐合适的服务人员，请进入我的需求查看。", "DEMAND_RECOMMENDATION");
         return R.ok(existingId);
     }
 
@@ -171,21 +173,6 @@ public class AdminDemandController {
             where r.demand_id = ? and r.deleted = 0 and s.deleted = 0
             order by r.sort_no asc, r.id desc
             """, demandId);
-    }
-
-    private void createMessage(Long demandId, String title, String content, String type) {
-        Long userId = jdbcTemplate.query(
-            "select user_id from user_demand where id = ? and deleted = 0 limit 1",
-            rs -> rs.next() ? rs.getLong("user_id") : null,
-            demandId
-        );
-        if (userId == null) {
-            return;
-        }
-        jdbcTemplate.update("""
-            insert into system_message(user_id, title, content, message_type, read_flag, created_at, updated_at, deleted)
-            values(?, ?, ?, ?, 0, now(), now(), 0)
-            """, userId, title, content, type);
     }
 
     private static String buildWhere(Long categoryId, String auditStatus, String followStatus, String keyword, List<Object> args) {

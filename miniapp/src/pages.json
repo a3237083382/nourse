@@ -61,9 +61,39 @@
       }
     },
     {
+      "path": "pages/order/service",
+      "style": {
+        "navigationBarTitleText": "服务订单"
+      }
+    },
+    {
+      "path": "pages/group/list",
+      "style": {
+        "navigationBarTitleText": "团购服务"
+      }
+    },
+    {
+      "path": "pages/group/detail",
+      "style": {
+        "navigationBarTitleText": "团购详情"
+      }
+    },
+    {
+      "path": "pages/group/orders",
+      "style": {
+        "navigationBarTitleText": "团购订单"
+      }
+    },
+    {
       "path": "pages/message/index",
       "style": {
         "navigationBarTitleText": "消息"
+      }
+    },
+    {
+      "path": "pages/content/index",
+      "style": {
+        "navigationBarTitleText": "内容"
       }
     },
     {
@@ -88,32 +118,32 @@
       {
         "pagePath": "pages/home/index",
         "text": "首页",
-        "iconPath": "static/logo.png",
-        "selectedIconPath": "static/logo.png"
+        "iconPath": "static/tab-home.png",
+        "selectedIconPath": "static/tab-home-active.png"
       },
       {
         "pagePath": "pages/contract/index",
         "text": "合同",
-        "iconPath": "static/logo.png",
-        "selectedIconPath": "static/logo.png"
+        "iconPath": "static/tab-contract.png",
+        "selectedIconPath": "static/tab-contract-active.png"
       },
       {
         "pagePath": "pages/staff/index",
         "text": "找阿姨",
-        "iconPath": "static/logo.png",
-        "selectedIconPath": "static/logo.png"
+        "iconPath": "static/tab-staff.png",
+        "selectedIconPath": "static/tab-staff-active.png"
       },
       {
         "pagePath": "pages/message/index",
         "text": "消息",
-        "iconPath": "static/logo.png",
-        "selectedIconPath": "static/logo.png"
+        "iconPath": "static/tab-message.png",
+        "selectedIconPath": "static/tab-message-active.png"
       },
       {
         "pagePath": "pages/mine/index",
         "text": "我的",
-        "iconPath": "static/logo.png",
-        "selectedIconPath": "static/logo.png"
+        "iconPath": "static/tab-mine.png",
+        "selectedIconPath": "static/tab-mine-active.png"
       }
     ]
   }

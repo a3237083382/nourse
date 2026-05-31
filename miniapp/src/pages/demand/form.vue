@@ -126,13 +126,15 @@ export default {
 .page {
   min-height: 100vh;
   padding: 24rpx;
-  background: #f6f7f9;
+  background: #f4f5f2;
 }
 
 .form {
   padding: 28rpx;
-  border-radius: 16rpx;
+  border: 1px solid rgba(31, 37, 43, 0.05);
+  border-radius: 26rpx;
   background: #fff;
+  box-shadow: 0 12rpx 30rpx rgba(32, 38, 44, 0.05);
 }
 
 .field {
@@ -156,7 +158,10 @@ input,
 textarea,
 .picker {
   width: 100%;
-  min-height: 64rpx;
+  min-height: 70rpx;
+  padding: 0 20rpx;
+  border-radius: 18rpx;
+  background: #f7f8f5;
   color: #3b414c;
   font-size: 28rpx;
 }
@@ -175,9 +180,10 @@ textarea {
   margin-top: 28rpx;
   height: 88rpx;
   line-height: 88rpx;
-  border-radius: 999rpx;
-  background: #ef3f5f;
+  border-radius: 22rpx;
+  background: #e84d64;
   color: #fff;
   font-size: 30rpx;
+  box-shadow: 0 12rpx 26rpx rgba(232, 77, 100, 0.18);
 }
 </style>

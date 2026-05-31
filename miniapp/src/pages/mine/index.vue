@@ -25,13 +25,14 @@
     <view class="menu">
       <view class="menu-item" @tap="openDemands">我的推荐</view>
       <view class="menu-item" @tap="openInterviews">我的邀约</view>
-      <view class="menu-item">团购订单</view>
-      <view class="menu-item">服务订单</view>
-      <view class="menu-item">常见问题</view>
-      <view class="menu-item">用户协议</view>
-      <view class="menu-item">隐私政策</view>
+      <view class="menu-item" @tap="openGroupProducts">团购服务</view>
+      <view class="menu-item" @tap="openGroupOrders">团购订单</view>
+      <view class="menu-item" @tap="openServiceOrders">服务订单</view>
+      <view class="menu-item" @tap="openContent('faq')">常见问题</view>
+      <view class="menu-item" @tap="openContent('agreement')">用户协议</view>
+      <view class="menu-item" @tap="openContent('privacy')">隐私政策</view>
       <view class="menu-item">联系客服</view>
-      <view class="menu-item">关于我们</view>
+      <view class="menu-item" @tap="openContent('about')">关于我们</view>
     </view>
   </view>
 </template>
@@ -72,8 +73,22 @@ export default {
       await ensureLogin()
       uni.navigateTo({ url: '/pages/interview/list' })
     },
+    openGroupProducts() {
+      uni.navigateTo({ url: '/pages/group/list' })
+    },
+    async openGroupOrders() {
+      await ensureLogin()
+      uni.navigateTo({ url: '/pages/group/orders' })
+    },
+    async openServiceOrders() {
+      await ensureLogin()
+      uni.navigateTo({ url: '/pages/order/service' })
+    },
     openDetail(id) {
       uni.navigateTo({ url: `/pages/staff/detail?id=${id}` })
+    },
+    openContent(type) {
+      uni.navigateTo({ url: `/pages/content/index?type=${type}` })
     },
   },
 }
@@ -82,17 +97,18 @@ export default {
 <style>
 .page {
   min-height: 100vh;
-  background: #f6f7f9;
-  padding: 24rpx;
+  background: #f4f5f2;
+  padding: 24rpx 24rpx 36rpx;
 }
 
 .profile {
   display: flex;
   align-items: center;
   gap: 24rpx;
-  padding: 32rpx;
-  border-radius: 18rpx;
-  background: #ffffff;
+  padding: 34rpx;
+  border-radius: 28rpx;
+  background: #20252b;
+  box-shadow: 0 18rpx 42rpx rgba(32, 37, 43, 0.16);
 }
 
 .avatar {
@@ -101,11 +117,16 @@ export default {
   height: 108rpx;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  background: #ef3f5f;
+  border-radius: 24rpx;
+  background: #ffffff;
+  color: #e84d64;
+  font-size: 40rpx;
+  font-weight: 800;
+}
+
+.profile .avatar {
   color: #fff;
-  font-size: 38rpx;
-  font-weight: 700;
+  background: #e84d64;
 }
 
 .name,
@@ -115,14 +136,14 @@ export default {
 }
 
 .name {
-  color: #20242c;
+  color: #fff;
   font-size: 32rpx;
   font-weight: 700;
 }
 
 .phone {
   margin-top: 8rpx;
-  color: #8a8f99;
+  color: rgba(255, 255, 255, 0.68);
   font-size: 24rpx;
 }
 
@@ -136,22 +157,25 @@ export default {
 .quick button {
   height: 80rpx;
   line-height: 80rpx;
-  border-radius: 14rpx;
+  border-radius: 20rpx;
   background: #fff;
   color: #3b414c;
   font-size: 28rpx;
+  box-shadow: 0 10rpx 24rpx rgba(32, 38, 44, 0.05);
 }
 
 .quick .primary {
-  background: #ef3f5f;
+  background: #e84d64;
   color: #fff;
 }
 
 .section,
 .menu {
   margin-top: 24rpx;
-  border-radius: 18rpx;
+  border: 1px solid rgba(31, 37, 43, 0.05);
+  border-radius: 26rpx;
   background: #ffffff;
+  box-shadow: 0 12rpx 30rpx rgba(32, 38, 44, 0.05);
 }
 
 .section {
@@ -185,10 +209,23 @@ export default {
 }
 
 .menu-item {
-  padding: 30rpx 32rpx;
+  position: relative;
+  padding: 30rpx 54rpx 30rpx 32rpx;
   border-bottom: 1px solid #edf0f3;
   color: #20242c;
   font-size: 28rpx;
+}
+
+.menu-item::after {
+  position: absolute;
+  right: 32rpx;
+  top: 50%;
+  width: 14rpx;
+  height: 14rpx;
+  border-top: 2rpx solid #b7bec5;
+  border-right: 2rpx solid #b7bec5;
+  content: "";
+  transform: translateY(-50%) rotate(45deg);
 }
 
 .menu-item:last-child {

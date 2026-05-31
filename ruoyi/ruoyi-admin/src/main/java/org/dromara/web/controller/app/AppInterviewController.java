@@ -50,12 +50,13 @@ public class AppInterviewController {
                 return R.fail("关联需求不存在");
             }
         }
+        String userNote = buildUserNote(request);
         jdbcTemplate.update("""
             insert into interview_appointment(user_id, staff_id, demand_id, contact_name, contact_phone,
-                status, created_at, updated_at, deleted)
-            values(?, ?, ?, ?, ?, 'PENDING', now(), now(), 0)
+                status, admin_note, created_at, updated_at, deleted)
+            values(?, ?, ?, ?, ?, 'PENDING', ?, now(), now(), 0)
             """, userId, request.staffId(), request.demandId(), request.contactName().trim(),
-            request.contactPhone().trim());
+            request.contactPhone().trim(), userNote);
         Long id = jdbcTemplate.queryForObject("select last_insert_id()", Long.class);
         if (request.demandId() != null) {
             jdbcTemplate.update("""
@@ -111,11 +112,34 @@ public class AppInterviewController {
         return R.ok(interview);
     }
 
+    private String buildUserNote(InterviewRequest request) {
+        StringBuilder note = new StringBuilder();
+        appendNote(note, "期望时间", request.preferredTime());
+        appendNote(note, "面试方式", request.interviewForm());
+        appendNote(note, "面试地址", request.address());
+        appendNote(note, "服务重点", request.workContent());
+        return note.isEmpty() ? null : note.toString();
+    }
+
+    private void appendNote(StringBuilder note, String label, String value) {
+        if (value == null || value.isBlank()) {
+            return;
+        }
+        if (!note.isEmpty()) {
+            note.append("\n");
+        }
+        note.append(label).append("：").append(value.trim());
+    }
+
     public record InterviewRequest(
         Long staffId,
         Long demandId,
         String contactName,
-        String contactPhone
+        String contactPhone,
+        String preferredTime,
+        String interviewForm,
+        String address,
+        String workContent
     ) {
     }
 }

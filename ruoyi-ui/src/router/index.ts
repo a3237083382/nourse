@@ -24,11 +24,6 @@ export const constantRoutes: RouteRecordRaw[] = [
     hidden: true
   },
   {
-    path: '/register',
-    component: () => import('@/views/register.vue'),
-    hidden: true
-  },
-  {
     path: '/:pathMatch(.*)*',
     component: () => import('@/views/error/404.vue'),
     hidden: true
@@ -113,6 +108,78 @@ export const constantRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/interview/index.vue'),
         name: 'InterviewManage',
         meta: { title: '预约面试', icon: 'phone' }
+      }
+    ]
+  },
+  {
+    path: '/content',
+    component: Layout,
+    redirect: '/content/list',
+    name: 'ContentManageRoot',
+    meta: { title: '内容管理', icon: 'edit' },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/content/index.vue'),
+        name: 'ContentManage',
+        meta: { title: '内容配置', icon: 'documentation' }
+      }
+    ]
+  },
+  {
+    path: '/contract',
+    component: Layout,
+    redirect: '/contract/list',
+    name: 'ContractManageRoot',
+    meta: { title: '合同管理', icon: 'documentation' },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/contract/index.vue'),
+        name: 'ContractManage',
+        meta: { title: '合同列表', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/order',
+    component: Layout,
+    redirect: '/order/service',
+    name: 'OrderManageRoot',
+    meta: { title: '订单管理', icon: 'shopping' },
+    children: [
+      {
+        path: 'service',
+        component: () => import('@/views/order/service.vue'),
+        name: 'ServiceOrderManage',
+        meta: { title: '服务订单', icon: 'date' }
+      }
+    ]
+  },
+  {
+    path: '/group',
+    component: Layout,
+    redirect: '/group/products',
+    name: 'GroupManageRoot',
+    meta: { title: '团购管理', icon: 'shopping' },
+    children: [
+      {
+        path: 'products',
+        component: () => import('@/views/group/product.vue'),
+        name: 'GroupProductManage',
+        meta: { title: '团购商品', icon: 'goods' }
+      },
+      {
+        path: 'teams',
+        component: () => import('@/views/group/team.vue'),
+        name: 'GroupTeamManage',
+        meta: { title: '拼团记录', icon: 'peoples' }
+      },
+      {
+        path: 'orders',
+        component: () => import('@/views/group/order.vue'),
+        name: 'GroupOrderManage',
+        meta: { title: '团购订单', icon: 'money' }
       }
     ]
   }

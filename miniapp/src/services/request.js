@@ -8,13 +8,25 @@ export function setToken(token) {
   uni.setStorageSync('appToken', token)
 }
 
+function cleanData(data) {
+  if (!data || Array.isArray(data) || typeof data !== 'object') {
+    return data || {}
+  }
+  return Object.keys(data).reduce((result, key) => {
+    if (data[key] !== undefined) {
+      result[key] = data[key]
+    }
+    return result
+  }, {})
+}
+
 export function request(options) {
   const token = getToken()
   return new Promise((resolve, reject) => {
     uni.request({
       url: BASE_URL + options.url,
       method: options.method || 'GET',
-      data: options.data || {},
+      data: cleanData(options.data),
       header: {
         'content-type': 'application/json;charset=utf-8',
         ...(token ? { Authorization: `Bearer ${token}`, clientid: 'app' } : {}),
@@ -40,9 +52,29 @@ export function request(options) {
   })
 }
 
-export function ensureLogin() {
-  if (getToken()) {
+async function mockLogin() {
+  let openid = uni.getStorageSync('mockOpenid')
+  if (!openid) {
+    openid = 'mock-openid'
+    uni.setStorageSync('mockOpenid', openid)
+  }
+  const login = await request({
+    url: '/api/app/auth/mock-login',
+    method: 'POST',
+    data: {
+      openid,
+      nickname: '小程序用户',
+    },
+  })
+  setToken(login.data.accessToken)
+}
+
+export function ensureLogin(options = {}) {
+  if (getToken() && !options.refresh) {
     return Promise.resolve()
+  }
+  if (options.refresh) {
+    return mockLogin()
   }
   return new Promise((resolve, reject) => {
     uni.showModal({
@@ -55,20 +87,7 @@ export function ensureLogin() {
           return
         }
         try {
-          let openid = uni.getStorageSync('mockOpenid')
-          if (!openid) {
-            openid = `mock-openid-${Date.now()}`
-            uni.setStorageSync('mockOpenid', openid)
-          }
-          const login = await request({
-            url: '/api/app/auth/mock-login',
-            method: 'POST',
-            data: {
-              openid,
-              nickname: '小程序用户',
-            },
-          })
-          setToken(login.data.accessToken)
+          await mockLogin()
           resolve()
         } catch (error) {
           reject(error)

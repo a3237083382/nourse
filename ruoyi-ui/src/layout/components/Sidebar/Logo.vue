@@ -11,7 +11,7 @@
         </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
+        <span class="sidebar-logo">家</span>
         <h1 class="sidebar-title">
           {{ title }}
         </h1>
@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 import variables from '@/assets/styles/variables.module.scss';
-import logo from '@/assets/logo/logo.png';
 import { useSettingsStore } from '@/store/modules/settings';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 import { NavTypeEnum } from '@/enums/NavTypeEnum';
@@ -84,11 +83,19 @@ const getLogoTextColor = computed(() => {
     width: 100%;
 
     & .sidebar-logo {
+      display: inline-flex;
       width: 32px;
       height: 32px;
+      align-items: center;
+      justify-content: center;
       vertical-align: middle;
       margin-right: 12px;
       margin-left: 12px;
+      border-radius: 10px;
+      background: #e84d64;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 800;
     }
 
     & .sidebar-title {

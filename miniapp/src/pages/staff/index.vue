@@ -1,8 +1,10 @@
 <template>
   <view class="page">
-    <view class="search">
-      <input v-model="query.keyword" placeholder="请输入姓名或服务说明" confirm-type="search" @confirm="reload" />
-      <button @tap="reload">搜索</button>
+    <view class="search-card">
+      <view class="search">
+        <input v-model="query.keyword" placeholder="请输入姓名或服务说明" confirm-type="search" @confirm="reload" />
+        <button @tap="reload">搜索</button>
+      </view>
     </view>
 
     <scroll-view class="category-scroll" scroll-x>
@@ -39,9 +41,13 @@
       <view class="info">
         <view class="row">
           <text class="name">{{ item.name }}</text>
-          <text class="salary">¥{{ item.salaryMin || '-' }}-{{ item.salaryMax || '-' }}/{{ item.salaryUnit || '月' }}</text>
+          <text class="salary">¥{{ money(item.salaryMin) }}-{{ money(item.salaryMax) }}/{{ unitText(item.salaryUnit) }}</text>
         </view>
-        <text class="meta">{{ item.city || '-' }} {{ item.district || '' }} | {{ item.age || '-' }}岁 | {{ item.experienceYears || 0 }}年经验</text>
+        <view class="meta-row">
+          <text>{{ item.city || '-' }} {{ item.district || '' }}</text>
+          <text>{{ item.age || '-' }}岁</text>
+          <text>{{ item.experienceYears || 0 }}年经验</text>
+        </view>
         <text class="desc">{{ item.serviceDesc || '暂无服务说明' }}</text>
       </view>
     </view>
@@ -143,6 +149,13 @@ export default {
     openDetail(id) {
       uni.navigateTo({ url: `/pages/staff/detail?id=${id}` })
     },
+    money(value) {
+      if (value === null || value === undefined || value === '') return '-'
+      return Number(value).toString().replace(/\.0+$/, '')
+    },
+    unitText(value) {
+      return { month: '月', MONTH: '月', day: '天', DAY: '天', time: '次', TIME: '次', hour: '小时', HOUR: '小时' }[value] || value || '月'
+    },
   },
 }
 </script>
@@ -150,54 +163,72 @@ export default {
 <style>
 .page {
   min-height: 100vh;
-  background: #f6f7f9;
-  padding: 24rpx;
+  background: #f4f5f2;
+  padding: 22rpx 24rpx 34rpx;
+}
+
+.search-card {
+  padding: 16rpx;
+  border: 1px solid rgba(31, 37, 43, 0.05);
+  border-radius: 28rpx;
+  background: #ffffff;
+  box-shadow: 0 16rpx 38rpx rgba(32, 38, 44, 0.06);
 }
 
 .search {
   display: flex;
-  gap: 16rpx;
+  gap: 12rpx;
+  align-items: center;
 }
 
 .search input {
   flex: 1;
-  height: 72rpx;
-  padding: 0 24rpx;
-  border-radius: 999rpx;
-  background: #ffffff;
+  height: 76rpx;
+  padding: 0 26rpx;
+  border-radius: 20rpx;
+  background: #f6f7f5;
+  color: #1f252b;
   font-size: 26rpx;
 }
 
 .search button {
-  width: 132rpx;
-  height: 72rpx;
-  line-height: 72rpx;
-  border-radius: 999rpx;
-  background: #ef3f5f;
+  width: 124rpx;
+  height: 76rpx;
+  line-height: 76rpx;
+  border-radius: 20rpx;
+  background: #e84d64;
   color: #fff;
   font-size: 26rpx;
+  box-shadow: 0 12rpx 24rpx rgba(232, 77, 100, 0.22);
 }
 
 .category-scroll {
-  margin: 24rpx 0 12rpx;
+  margin: 24rpx -24rpx 14rpx;
+  padding-left: 24rpx;
   white-space: nowrap;
 }
 
 .category-row {
   display: flex;
-  gap: 16rpx;
+  gap: 14rpx;
+  padding-right: 24rpx;
 }
 
 .category {
-  padding: 14rpx 24rpx;
-  border-radius: 999rpx;
+  flex: 0 0 auto;
+  min-width: 96rpx;
+  padding: 16rpx 24rpx;
+  border: 1px solid #edf0ec;
+  border-radius: 18rpx;
   background: #fff;
-  color: #525a66;
+  color: #68717a;
   font-size: 24rpx;
+  text-align: center;
 }
 
 .category.active {
-  background: #20242c;
+  border-color: #1f252b;
+  background: #1f252b;
   color: #fff;
 }
 
@@ -205,50 +236,57 @@ export default {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12rpx;
-  margin-bottom: 22rpx;
+  margin-bottom: 24rpx;
 }
 
 .filters text,
 .region {
   display: block;
-  height: 64rpx;
-  line-height: 64rpx;
-  border-radius: 12rpx;
+  height: 68rpx;
+  line-height: 68rpx;
+  border: 1px solid #ecefed;
+  border-radius: 18rpx;
   background: #fff;
-  color: #3b414c;
+  color: #59636d;
   text-align: center;
   font-size: 24rpx;
 }
 
 .empty {
-  padding: 80rpx 0;
-  color: #8a8f99;
+  margin-top: 28rpx;
+  padding: 96rpx 0;
+  border-radius: 24rpx;
+  background: #fff;
+  color: #929aa3;
   text-align: center;
   font-size: 26rpx;
 }
 
 .card {
   display: flex;
-  gap: 24rpx;
-  margin-bottom: 20rpx;
-  padding: 24rpx;
-  border-radius: 16rpx;
+  gap: 22rpx;
+  margin-bottom: 18rpx;
+  padding: 22rpx;
+  border: 1px solid rgba(31, 37, 43, 0.05);
+  border-radius: 24rpx;
   background: #ffffff;
+  box-shadow: 0 12rpx 30rpx rgba(32, 38, 44, 0.05);
 }
 
 .avatar {
-  width: 132rpx;
-  height: 132rpx;
-  border-radius: 12rpx;
-  background: #f5c7d1;
+  flex: 0 0 auto;
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 20rpx;
+  background: #f4c8d0;
 }
 
 .placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ef3f5f;
-  font-size: 40rpx;
+  color: #d93f58;
+  font-size: 42rpx;
   font-weight: 700;
 }
 
@@ -259,27 +297,58 @@ export default {
 
 .row {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 16rpx;
+  gap: 14rpx;
 }
 
 .name {
+  flex: 1;
+  min-width: 0;
   color: #20242c;
-  font-size: 32rpx;
+  font-size: 31rpx;
   font-weight: 700;
+  line-height: 1.25;
 }
 
 .salary {
-  color: #ef3f5f;
-  font-size: 24rpx;
+  flex: 0 0 auto;
+  max-width: 236rpx;
+  color: #e84d64;
+  font-size: 23rpx;
   font-weight: 700;
+  line-height: 1.3;
+  text-align: right;
+  word-break: break-all;
 }
 
-.meta,
+.meta-row,
 .desc {
   display: block;
   margin-top: 12rpx;
-  color: #6d7480;
+  color: #68717a;
   font-size: 24rpx;
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx 12rpx;
+}
+
+.meta-row text {
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+  background: #f3f4f1;
+  color: #68717a;
+  font-size: 22rpx;
+}
+
+.desc {
+  display: -webkit-box;
+  overflow: hidden;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 </style>

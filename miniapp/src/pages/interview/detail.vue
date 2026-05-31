@@ -61,14 +61,16 @@ export default {
 .page {
   min-height: 100vh;
   padding: 24rpx;
-  background: #f6f7f9;
+  background: #f4f5f2;
 }
 
 .panel {
   margin-bottom: 22rpx;
   padding: 28rpx;
-  border-radius: 18rpx;
+  border: 1px solid rgba(31, 37, 43, 0.05);
+  border-radius: 24rpx;
   background: #fff;
+  box-shadow: 0 12rpx 30rpx rgba(32, 38, 44, 0.05);
 }
 
 .row {
@@ -94,7 +96,11 @@ export default {
 }
 
 .status {
-  color: #ef3f5f;
+  flex: 0 0 auto;
+  padding: 6rpx 14rpx;
+  border-radius: 999rpx;
+  background: #fff0f2;
+  color: #d93f58;
   font-size: 26rpx;
 }
 

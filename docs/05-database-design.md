@@ -227,9 +227,9 @@
 状态：
 
 - WAIT_START：待开始。
-- IN_PROGRESS：进行中。
+- SERVING：服务中。
 - COMPLETED：已完成。
-- TRANSFERRED：已转让。
+- CANCELED：已取消。
 
 ### 2.14 团购商品表 `group_product`
 

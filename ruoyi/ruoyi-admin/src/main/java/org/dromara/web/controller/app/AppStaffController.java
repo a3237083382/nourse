@@ -49,7 +49,7 @@ public class AppStaffController {
             from service_staff s
             left join service_category c on c.id = s.category_id
             where
-            """ + where + """
+            """ + where + "\n" + """
             order by s.recommended desc, s.sort_no asc, s.id desc
             limit ? offset ?
             """;

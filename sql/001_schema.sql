@@ -237,7 +237,7 @@ CREATE TABLE IF NOT EXISTS service_order (
   KEY idx_service_order_demand_id (demand_id),
   KEY idx_service_order_category_id (category_id),
   KEY idx_service_order_status (status),
-  CONSTRAINT chk_service_order_status CHECK (status IN ('WAIT_START', 'IN_PROGRESS', 'COMPLETED', 'TRANSFERRED'))
+  CONSTRAINT chk_service_order_status CHECK (status IN ('WAIT_START', 'SERVING', 'COMPLETED', 'CANCELED'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='服务订单表';
 
 CREATE TABLE IF NOT EXISTS group_product (

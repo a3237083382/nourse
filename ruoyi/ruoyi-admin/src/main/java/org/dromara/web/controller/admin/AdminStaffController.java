@@ -42,7 +42,7 @@ public class AdminStaffController {
             from service_staff s
             left join service_category c on c.id = s.category_id
             where
-            """ + where + """
+            """ + where + "\n" + """
             order by s.sort_no asc, s.id desc
             limit ? offset ?
             """;

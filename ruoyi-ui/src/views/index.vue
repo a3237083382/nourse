@@ -1,165 +1,306 @@
 <template>
-  <div class="app-container home">
-    <el-row :gutter="20">
-      <el-col :sm="24" :lg="12" style="padding-left: 20px">
-        <h2>RuoYi-Vue-Plus多租户管理系统</h2>
-        <p>
-          RuoYi-Vue-Plus 是基于 RuoYi-Vue 针对 分布式集群 场景升级(不兼容原框架)
-          <br />
-          * 前端开发框架 Vue3、TS、Element Plus<br />
-          * 后端开发框架 Spring Boot<br />
-          * 容器框架 Undertow 基于 Netty 的高性能容器<br />
-          * 权限认证框架 Sa-Token 支持多终端认证系统<br />
-          * 关系数据库 MySQL 适配 8.X 最低 5.7<br />
-          * 缓存数据库 Redis 适配 6.X 最低 4.X<br />
-          * 数据库框架 Mybatis-Plus 快速 CRUD 增加开发效率<br />
-          * 数据库框架 p6spy 更强劲的 SQL 分析<br />
-          * 多数据源框架 dynamic-datasource 支持主从与多种类数据库异构<br />
-          * 序列化框架 Jackson 统一使用 jackson 高效可靠<br />
-          * Redis客户端 Redisson 性能强劲、API丰富<br />
-          * 分布式限流 Redisson 全局、请求IP、集群ID 多种限流<br />
-          * 分布式锁 Lock4j 注解锁、工具锁 多种多样<br />
-          * 分布式幂等 Lock4j 基于分布式锁实现<br />
-          * 分布式链路追踪 SkyWalking 支持链路追踪、网格分析、度量聚合、可视化<br />
-          * 分布式任务调度 SnailJob 高性能 高可靠 易扩展<br />
-          * 文件存储 Minio 本地存储<br />
-          * 文件存储 七牛、阿里、腾讯 云存储<br />
-          * 监控框架 SpringBoot-Admin 全方位服务监控<br />
-          * 校验框架 Validation 增强接口安全性 严谨性<br />
-          * Excel框架 FastExcel(原Alibaba EasyExcel) 性能优异 扩展性强<br />
-          * 文档框架 SpringDoc、javadoc 无注解零入侵基于java注释<br />
-          * 工具类框架 Hutool、Lombok 减少代码冗余 增加安全性<br />
-          * 代码生成器 适配MP、SpringDoc规范化代码 一键生成前后端代码<br />
-          * 部署方式 Docker 容器编排 一键部署业务集群<br />
-          * 国际化 SpringMessage Spring标准国际化方案<br />
-        </p>
-        <p><b>当前版本:</b> <span>v5.6.1</span></p>
-        <p>
-          <el-tag type="danger">&yen;免费开源</el-tag>
-        </p>
-        <p>
-          <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://gitee.com/dromara/RuoYi-Vue-Plus')">访问码云</el-button>
-          <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://github.com/dromara/RuoYi-Vue-Plus')">访问GitHub</el-button>
-          <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://plus-doc.dromara.org/#/ruoyi-vue-plus/changlog')"
-            >更新日志</el-button
-          >
-        </p>
-      </el-col>
+  <div class="dashboard">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">运营工作台</p>
+        <h1>家政到家服务管理后台</h1>
+        <p class="summary">集中处理客户需求、阿姨资料、推荐匹配、预约面试和小程序内容消息。</p>
+      </div>
+      <div class="hero-actions">
+        <el-button type="primary" @click="go('/demand/list')">处理用户需求</el-button>
+        <el-button @click="go('/staff/list')">维护服务人员</el-button>
+      </div>
+    </section>
 
-      <el-col :sm="24" :lg="12" style="padding-left: 20px">
-        <h2>RuoYi-Cloud-Plus多租户微服务管理系统</h2>
-        <p>
-          RuoYi-Cloud-Plus 微服务通用权限管理系统 重写 RuoYi-Cloud 全方位升级(不兼容原框架)
-          <br />
-          * 前端开发框架 Vue3、TS、Element UI<br />
-          * 后端开发框架 Spring Boot<br />
-          * 微服务开发框架 Spring Cloud、Spring Cloud Alibaba<br />
-          * 容器框架 Undertow 基于 XNIO 的高性能容器<br />
-          * 权限认证框架 Sa-Token、Jwt 支持多终端认证系统<br />
-          * 关系数据库 MySQL 适配 8.X 最低 5.7<br />
-          * 关系数据库 Oracle 适配 11g 12c<br />
-          * 关系数据库 PostgreSQL 适配 13 14<br />
-          * 关系数据库 SQLServer 适配 2017 2019<br />
-          * 缓存数据库 Redis 适配 6.X 最低 5.X<br />
-          * 分布式注册中心 Alibaba Nacos 采用2.X 基于GRPC通信高性能<br />
-          * 分布式配置中心 Alibaba Nacos 采用2.X 基于GRPC通信高性能<br />
-          * 服务网关 Spring Cloud Gateway 响应式高性能网关<br />
-          * 负载均衡 Spring Cloud Loadbalancer 负载均衡处理<br />
-          * RPC远程调用 Apache Dubbo 原生态使用体验、高性能<br />
-          * 分布式限流熔断 Alibaba Sentinel 无侵入、高扩展<br />
-          * 分布式事务 Alibaba Seata 无侵入、高扩展 支持 四种模式<br />
-          * 分布式消息队列 Apache Kafka 高性能高速度<br />
-          * 分布式消息队列 Apache RocketMQ 高可用功能多样<br />
-          * 分布式消息队列 RabbitMQ 支持各种扩展插件功能多样性<br />
-          * 分布式搜索引擎 ElasticSearch 业界知名<br />
-          * 分布式链路追踪 Apache SkyWalking 链路追踪、网格分析、度量聚合、可视化<br />
-          * 分布式日志中心 ELK 业界成熟解决方案<br />
-          * 分布式监控 Prometheus、Grafana 全方位性能监控<br />
-          * 其余与 Vue 版本一致<br />
-        </p>
-        <p><b>当前版本:</b> <span>v2.6.1</span></p>
-        <p>
-          <el-tag type="danger">&yen;免费开源</el-tag>
-        </p>
-        <p>
-          <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://gitee.com/dromara/RuoYi-Cloud-Plus')">访问码云</el-button>
-          <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://github.com/dromara/RuoYi-Cloud-Plus')">访问GitHub</el-button>
-          <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://plus-doc.dromara.org/#/ruoyi-cloud-plus/changlog')"
-            >更新日志</el-button
-          >
-        </p>
-      </el-col>
-    </el-row>
-    <el-divider />
+    <section class="metric-grid">
+      <div v-for="item in metrics" :key="item.label" class="metric-card">
+        <span class="metric-label">{{ item.label }}</span>
+        <strong>{{ item.value }}</strong>
+        <span class="metric-desc">{{ item.desc }}</span>
+      </div>
+    </section>
+
+    <section class="content-grid">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>今日重点</h2>
+          <span>按流程优先处理</span>
+        </div>
+        <div v-for="item in tasks" :key="item.title" class="task" @click="go(item.path)">
+          <div>
+            <strong>{{ item.title }}</strong>
+            <p>{{ item.desc }}</p>
+          </div>
+          <el-tag :type="item.type" effect="light">{{ item.status }}</el-tag>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>常用入口</h2>
+          <span>客户后台只保留业务功能</span>
+        </div>
+        <div class="shortcut-grid">
+          <button v-for="item in shortcuts" :key="item.title" type="button" class="shortcut" @click="go(item.path)">
+            <span>{{ item.icon }}</span>
+            <strong>{{ item.title }}</strong>
+            <small>{{ item.desc }}</small>
+          </button>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup name="Index" lang="ts">
-const goTarget = (url: string) => {
-  window.open(url, '__blank');
+import router from '@/router';
+
+const metrics = [
+  { label: '服务人员', value: '已上线', desc: '维护阿姨资料、证书、照片与上下架' },
+  { label: '用户需求', value: '待审核', desc: '审核通过后可推荐合适阿姨' },
+  { label: '预约面试', value: '待跟进', desc: '线下联系客户并更新处理状态' },
+  { label: '内容消息', value: '已接入', desc: '首页内容、协议、FAQ 和系统消息' }
+];
+
+const tasks = [
+  { title: '审核新发布需求', desc: '确认服务类型、联系人和地址信息，审核通过后进入推荐流程。', status: '需求管理', type: 'danger', path: '/demand/list' },
+  { title: '推荐合适阿姨', desc: '在已通过需求中选择服务人员，客户会在小程序查看推荐列表。', status: '推荐匹配', type: 'success', path: '/demand/list' },
+  { title: '处理预约面试', desc: '查看客户提交的邀约，线下联系后更新为已联系、已安排或已完成。', status: '预约面试', type: 'warning', path: '/interview/list' },
+  { title: '维护小程序内容', desc: '更新首页轮播、签约动态、FAQ、协议、隐私政策和关于我们。', status: '内容配置', type: 'info', path: '/content/list' }
+];
+
+const shortcuts = [
+  { icon: '类', title: '服务分类', desc: '维护月嫂、保姆等分类', path: '/staff/category' },
+  { icon: '姨', title: '服务人员', desc: '录入和上下架阿姨', path: '/staff/list' },
+  { icon: '需', title: '用户需求', desc: '审核与推荐阿姨', path: '/demand/list' },
+  { icon: '约', title: '预约面试', desc: '跟进客户邀约', path: '/interview/list' },
+  { icon: '文', title: '内容配置', desc: '维护小程序展示内容', path: '/content/list' }
+];
+
+const go = (path: string) => {
+  router.push(path);
 };
 </script>
 
 <style lang="scss" scoped>
-.home {
-  blockquote {
-    padding: 10px 20px;
-    margin: 0 0 20px;
-    font-size: 17.5px;
-    border-left: 5px solid #eee;
-  }
-  hr {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border: 0;
-    border-top: 1px solid #eee;
-  }
-  .col-item {
-    margin-bottom: 20px;
-  }
+.dashboard {
+  min-height: calc(100vh - 84px);
+  padding: 24px;
+  background: #f5f6f4;
+  color: #20252b;
+}
 
-  ul {
-    padding: 0;
-    margin: 0;
-  }
+.hero {
+  display: flex;
+  min-height: 188px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 34px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 88% 16%, rgba(232, 77, 100, 0.28), transparent 26%),
+    linear-gradient(135deg, #20252b 0%, #2d3831 100%);
+  color: #fff;
+  box-shadow: 0 18px 44px rgba(32, 37, 43, 0.16);
+}
 
-  font-family: 'open sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+.eyebrow {
+  margin: 0 0 10px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.25;
+  font-weight: 800;
+}
+
+.summary {
+  max-width: 560px;
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.hero-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 12px;
+}
+
+.hero-actions :deep(.el-button--primary) {
+  border-color: #e84d64;
+  background: #e84d64;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.metric-card,
+.panel {
+  border: 1px solid rgba(32, 37, 43, 0.06);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(32, 37, 43, 0.05);
+}
+
+.metric-card {
+  padding: 22px;
+}
+
+.metric-label,
+.metric-desc {
+  display: block;
+  color: #7b8490;
+}
+
+.metric-label {
   font-size: 13px;
-  color: #676a6c;
-  overflow-x: hidden;
+}
 
-  ul {
-    list-style-type: none;
-  }
+.metric-card strong {
+  display: block;
+  margin: 10px 0 8px;
+  font-size: 25px;
+}
 
-  h4 {
-    margin-top: 0px;
-  }
+.metric-desc {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.panel {
+  padding: 24px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
 
   h2 {
-    margin-top: 10px;
-    font-size: 26px;
-    font-weight: 100;
+    margin: 0;
+    font-size: 20px;
+  }
+
+  span {
+    color: #8a929b;
+    font-size: 13px;
+  }
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  border-top: 1px solid #eef0ec;
+  cursor: pointer;
+
+  &:first-of-type {
+    border-top: 0;
+  }
+
+  strong {
+    font-size: 15px;
   }
 
   p {
-    margin-top: 10px;
+    margin: 7px 0 0;
+    color: #747d86;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+}
 
-    b {
-      font-weight: 700;
-    }
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.shortcut {
+  min-height: 116px;
+  padding: 18px;
+  border: 1px solid #eef0ec;
+  border-radius: 16px;
+  background: #f8f9f6;
+  color: #20252b;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+
+  &:hover {
+    box-shadow: 0 12px 26px rgba(32, 37, 43, 0.08);
+    transform: translateY(-2px);
   }
 
-  .update-log {
-    ol {
-      display: block;
-      list-style-type: decimal;
-      margin-block-start: 1em;
-      margin-block-end: 1em;
-      margin-inline-start: 0;
-      margin-inline-end: 0;
-      padding-inline-start: 40px;
-    }
+  span {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #e84d64;
+    color: #fff;
+    font-weight: 800;
+  }
+
+  strong,
+  small {
+    display: block;
+  }
+
+  strong {
+    margin-top: 12px;
+    font-size: 15px;
+  }
+
+  small {
+    margin-top: 6px;
+    color: #7b8490;
+  }
+}
+
+@media (max-width: 1180px) {
+  .metric-grid,
+  .content-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .hero,
+  .content-grid,
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    display: block;
+  }
+
+  .hero-actions {
+    margin-top: 24px;
   }
 }
 </style>

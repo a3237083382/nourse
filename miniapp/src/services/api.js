@@ -4,6 +4,10 @@ export function getHome() {
   return request({ url: '/api/app/home' })
 }
 
+export function getContent(type) {
+  return request({ url: `/api/app/content/${type}` })
+}
+
 export function getCategories() {
   return request({ url: '/api/app/categories' })
 }
@@ -58,4 +62,56 @@ export function getInterviewList(params) {
 
 export function getInterviewDetail(id) {
   return request({ url: `/api/app/interviews/${id}` })
+}
+
+export function getMessageList(params) {
+  return request({ url: '/api/app/messages', data: params })
+}
+
+export function markMessageRead(id) {
+  return request({ url: `/api/app/messages/${id}/read`, method: 'POST' })
+}
+
+export function getContractList(params) {
+  return request({ url: '/api/app/contracts', data: params })
+}
+
+export function getContractDetail(id) {
+  return request({ url: `/api/app/contracts/${id}` })
+}
+
+export function getServiceOrderList(params) {
+  return request({ url: '/api/app/service-orders', data: params })
+}
+
+export function getServiceOrderDetail(id) {
+  return request({ url: `/api/app/service-orders/${id}` })
+}
+
+export function getGroupProductList(params) {
+  return request({ url: '/api/app/group-products', data: params })
+}
+
+export function getGroupProductDetail(id) {
+  return request({ url: `/api/app/group-products/${id}` })
+}
+
+export function createSingleGroupOrder(data) {
+  return request({ url: '/api/app/group-orders/single', method: 'POST', data })
+}
+
+export function startGroupOrder(data) {
+  return request({ url: '/api/app/group-orders/group/start', method: 'POST', data })
+}
+
+export function joinGroupOrder(data) {
+  return request({ url: '/api/app/group-orders/group/join', method: 'POST', data })
+}
+
+export function getGroupOrderList(params) {
+  return request({ url: '/api/app/group-orders', data: params })
+}
+
+export function getGroupOrderDetail(id) {
+  return request({ url: `/api/app/group-orders/${id}` })
 }

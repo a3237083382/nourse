@@ -3,6 +3,7 @@ package org.dromara.web.controller.app;
 import cn.dev33.satoken.annotation.SaIgnore;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.R;
+import org.dromara.web.service.ContentConfigService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class AppHomeController {
 
     private final JdbcTemplate jdbcTemplate;
+    private final ContentConfigService contentConfigService;
 
     @GetMapping
     public R<Map<String, Object>> home() {
@@ -38,17 +40,38 @@ public class AppHomeController {
             order by recommended desc, sort_no asc, id desc
             limit 4
             """);
-        return R.ok(Map.of(
-            "categories", categories,
-            "signSuccessTips", List.of(
+        List<Map<String, Object>> groupProducts = jdbcTemplate.queryForList("""
+            select id, title, cover_url coverUrl, original_price originalPrice,
+                   single_price price, group_price groupPrice, sold_count soldCount
+            from group_product
+            where deleted = 0 and status = 'ONLINE'
+            order by id desc
+            limit 4
+            """);
+        List<Map<String, Object>> banners = contentConfigService.listEnabled("BANNER");
+        List<String> signTips = contentConfigService.listEnabled("SIGN_TIP").stream()
+            .map(item -> {
+                Object content = item.get("content");
+                if (content != null && !content.toString().isBlank()) {
+                    return content.toString();
+                }
+                Object title = item.get("title");
+                return title == null ? "" : title.toString();
+            })
+            .filter(text -> !text.isBlank())
+            .toList();
+        if (signTips.isEmpty()) {
+            signTips = List.of(
                 "恭喜李女士签约月嫂服务",
                 "恭喜王先生预约保洁服务",
                 "恭喜陈女士完成育婴师面试"
-            ),
-            "groupProducts", List.of(
-                Map.of("id", 1, "title", "深度保洁体验", "price", 429, "groupPrice", 299),
-                Map.of("id", 2, "title", "老人陪护体验", "price", 368, "groupPrice", 258)
-            ),
+            );
+        }
+        return R.ok(Map.of(
+            "banners", banners,
+            "categories", categories,
+            "signSuccessTips", signTips,
+            "groupProducts", groupProducts,
             "recommendedStaff", staff
         ));
     }

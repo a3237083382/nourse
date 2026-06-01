@@ -148,10 +148,12 @@ public class AppGroupOrderController {
             select o.id, o.order_no orderNo, o.buy_type buyType, o.quantity, o.amount, o.status,
                    o.group_team_id groupTeamId, o.valid_until validUntil, o.created_at createdAt,
                    p.title productTitle, p.cover_url coverUrl, t.status teamStatus,
-                   t.group_size groupSize, t.joined_count joinedCount
+                   t.group_size groupSize, t.joined_count joinedCount,
+                   r.id reviewId, r.rating reviewRating, r.content reviewContent
             from group_order o
             left join group_product p on p.id = o.product_id
             left join group_team t on t.id = o.group_team_id
+            left join group_order_review r on r.group_order_id = o.id and r.deleted = 0
             where
             """ + where + "\n" + """
             order by o.id desc
@@ -167,13 +169,44 @@ public class AppGroupOrderController {
             select o.id, o.order_no orderNo, o.buy_type buyType, o.quantity, o.amount, o.status,
                    o.group_team_id groupTeamId, o.paid_at paidAt, o.valid_until validUntil, o.created_at createdAt,
                    p.title productTitle, p.cover_url coverUrl, p.notice, p.guarantee,
-                   t.status teamStatus, t.group_size groupSize, t.joined_count joinedCount, t.expire_at expireAt
+                   t.status teamStatus, t.group_size groupSize, t.joined_count joinedCount, t.expire_at expireAt,
+                   r.id reviewId, r.rating reviewRating, r.content reviewContent
             from group_order o
             left join group_product p on p.id = o.product_id
             left join group_team t on t.id = o.group_team_id
+            left join group_order_review r on r.group_order_id = o.id and r.deleted = 0
             where o.id = ? and o.user_id = ? and o.deleted = 0
             """, id, userId);
         return R.ok(order);
+    }
+
+    @PostMapping("/{id}/review")
+    @Transactional(rollbackFor = Exception.class)
+    public R<Void> review(@PathVariable Long id, @RequestBody ReviewRequest request) {
+        if (request == null || request.rating() == null || request.rating() < 1 || request.rating() > 5) {
+            return R.fail("请选择 1-5 分评价");
+        }
+        Long userId = LoginHelper.getUserId();
+        Map<String, Object> order = jdbcTemplate.queryForMap("""
+            select id, product_id productId, status
+            from group_order
+            where id = ? and user_id = ? and deleted = 0
+            """, id, userId);
+        if (!"USED".equals(order.get("status"))) {
+            return R.fail("团购服务使用完成后才可以评价");
+        }
+        Long exists = jdbcTemplate.queryForObject("""
+            select count(1) from group_order_review
+            where group_order_id = ? and deleted = 0
+            """, Long.class, id);
+        if (exists != null && exists > 0) {
+            return R.fail("该团购订单已评价");
+        }
+        jdbcTemplate.update("""
+            insert into group_order_review(group_order_id, user_id, product_id, rating, content, created_at, updated_at, deleted)
+            values(?, ?, ?, ?, ?, now(), now(), 0)
+            """, id, userId, ((Number) order.get("productId")).longValue(), request.rating(), cleanContent(request.content()));
+        return R.ok();
     }
 
     private Product product(Long productId) {
@@ -203,6 +236,14 @@ public class AppGroupOrderController {
         return prefix + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
     }
 
+    private static String cleanContent(String content) {
+        if (content == null || content.isBlank()) {
+            return "";
+        }
+        String text = content.trim();
+        return text.length() > 512 ? text.substring(0, 512) : text;
+    }
+
     private record Product(Long id, BigDecimal singlePrice, BigDecimal groupPrice, int groupSize, int validDays) {
     }
 
@@ -210,5 +251,8 @@ public class AppGroupOrderController {
     }
 
     public record JoinOrderRequest(Long teamId, Integer quantity) {
+    }
+
+    public record ReviewRequest(Integer rating, String content) {
     }
 }

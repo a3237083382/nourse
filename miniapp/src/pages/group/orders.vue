@@ -45,13 +45,43 @@
           <text class="team-title">拼团状态：{{ teamText(detail.teamStatus) }}</text>
           <text class="team-desc">当前 {{ detail.joinedCount || 1 }}/{{ detail.groupSize || 2 }} 人，满员后自动成团。</text>
         </view>
+        <view class="flow">
+          <view v-for="step in groupFlow" :key="step.value" class="flow-step" :class="{ done: isFlowDone(step.value) }">
+            <view class="flow-dot">{{ step.index }}</view>
+            <text>{{ step.label }}</text>
+          </view>
+        </view>
+        <view v-if="detail.reviewId" class="review">
+          <text class="review-title">用户评价</text>
+          <text class="stars">{{ stars(detail.reviewRating) }}</text>
+          <text class="review-content">{{ detail.reviewContent || '用户未填写文字评价' }}</text>
+        </view>
+        <view v-else-if="detail.status === 'USED'" class="review">
+          <text class="review-title">评价本次团购服务</text>
+          <view class="star-row">
+            <text
+              v-for="score in [1, 2, 3, 4, 5]"
+              :key="score"
+              class="star"
+              :class="{ active: reviewForm.rating >= score }"
+              @tap="reviewForm.rating = score"
+            >★</text>
+          </view>
+          <textarea
+            v-model="reviewForm.content"
+            class="review-input"
+            maxlength="512"
+            placeholder="写下团购服务体验，方便平台持续改进"
+          />
+          <button class="review-button" @tap="submitReview">提交评价</button>
+        </view>
       </view>
     </view>
   </view>
 </template>
 
 <script>
-import { getGroupOrderDetail, getGroupOrderList } from '@/services/api'
+import { getGroupOrderDetail, getGroupOrderList, reviewGroupOrder } from '@/services/api'
 import { ensureLogin } from '@/services/request'
 
 export default {
@@ -72,6 +102,16 @@ export default {
       },
       orders: [],
       detail: null,
+      reviewForm: {
+        rating: 5,
+        content: '',
+      },
+      groupFlow: [
+        { index: 1, label: '购买', value: 'PAID' },
+        { index: 2, label: '成团', value: 'GROUPED' },
+        { index: 3, label: '服务完成', value: 'USED' },
+        { index: 4, label: '用户评价', value: 'REVIEWED' },
+      ],
     }
   },
   async onShow() {
@@ -90,6 +130,15 @@ export default {
     async openDetail(item) {
       const res = await getGroupOrderDetail(item.id)
       this.detail = res.data
+      this.reviewForm = { rating: 5, content: '' }
+    },
+    async submitReview() {
+      if (!this.detail) return
+      await reviewGroupOrder(this.detail.id, this.reviewForm)
+      uni.showToast({ title: '评价成功', icon: 'success' })
+      const res = await getGroupOrderDetail(this.detail.id)
+      this.detail = res.data
+      this.loadOrders()
     },
     statusText(status) {
       return {
@@ -110,6 +159,22 @@ export default {
     },
     money(value) {
       return Number(value || 0).toFixed(2).replace(/\.00$/, '')
+    },
+    isFlowDone(value) {
+      if (!this.detail) return false
+      const grouped = this.detail.buyType !== 'GROUP' || this.detail.teamStatus === 'SUCCESS'
+      const used = this.detail.status === 'USED'
+      const reviewed = !!this.detail.reviewId
+      return {
+        PAID: ['WAIT_SHARE', 'WAIT_USE', 'USED'].includes(this.detail.status),
+        GROUPED: grouped,
+        USED: used,
+        REVIEWED: reviewed,
+      }[value]
+    },
+    stars(value) {
+      const score = Number(value || 0)
+      return '★★★★★'.slice(0, score) + '☆☆☆☆☆'.slice(0, Math.max(0, 5 - score))
     },
   },
 }
@@ -268,5 +333,118 @@ export default {
   color: #68717a;
   font-size: 24rpx;
   line-height: 1.6;
+}
+
+.flow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+  margin-top: 24rpx;
+  padding: 24rpx 0 8rpx;
+  border-top: 1px solid #edf0f3;
+}
+
+.flow-step {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10rpx;
+  color: #9aa1aa;
+  font-size: 23rpx;
+}
+
+.flow-dot {
+  display: flex;
+  width: 54rpx;
+  height: 54rpx;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #eef0f2;
+  color: #9aa1aa;
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.flow-step.done {
+  color: #ef3f5f;
+  font-weight: 700;
+}
+
+.flow-step.done .flow-dot {
+  background: #ffe9ee;
+  color: #ef3f5f;
+}
+
+.review {
+  margin-top: 24rpx;
+  padding: 24rpx;
+  border-radius: 20rpx;
+  background: #f7f8f5;
+}
+
+.review-title,
+.review-content,
+.stars {
+  display: block;
+}
+
+.review-title {
+  color: #20242c;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.stars {
+  margin-top: 12rpx;
+  color: #ff9f1c;
+  font-size: 32rpx;
+  letter-spacing: 0;
+}
+
+.review-content {
+  margin-top: 10rpx;
+  color: #68717a;
+  font-size: 25rpx;
+  line-height: 1.6;
+}
+
+.star-row {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 12rpx;
+}
+
+.star {
+  color: #d4d8dd;
+  font-size: 44rpx;
+  line-height: 1;
+}
+
+.star.active {
+  color: #ff9f1c;
+}
+
+.review-input {
+  width: 100%;
+  height: 150rpx;
+  box-sizing: border-box;
+  margin-top: 18rpx;
+  padding: 18rpx;
+  border-radius: 16rpx;
+  background: #fff;
+  color: #3b414c;
+  font-size: 25rpx;
+}
+
+.review-button {
+  height: 72rpx;
+  line-height: 72rpx;
+  margin-top: 18rpx;
+  border-radius: 16rpx;
+  background: #ef3f5f;
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 700;
 }
 </style>

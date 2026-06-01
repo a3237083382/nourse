@@ -7,11 +7,12 @@
     <view v-if="products.length === 0" class="empty">暂无团购商品</view>
     <view v-for="item in products" :key="item.id" class="product" @tap="openDetail(item.id)">
       <view class="cover">
-        <text>{{ item.title.slice(0, 2) }}</text>
+        <image v-if="item.coverUrl" :src="item.coverUrl" mode="aspectFill" />
+        <text v-else>{{ item.title.slice(0, 2) }}</text>
       </view>
       <view class="info">
         <text class="name">{{ item.title }}</text>
-        <text class="meta">已售 {{ item.soldCount || 0 }} · {{ item.groupSize || 2 }} 人团</text>
+        <text class="meta">{{ groupMeta(item) }}</text>
         <view class="price-row">
           <text class="price">¥{{ money(item.groupPrice) }}</text>
           <text class="single">单买 ¥{{ money(item.singlePrice) }}</text>
@@ -28,6 +29,19 @@ export default {
   data() {
     return {
       products: [],
+      nowTime: Date.now(),
+      countdownTimer: null,
+    }
+  },
+  onLoad() {
+    this.countdownTimer = setInterval(() => {
+      this.nowTime = Date.now()
+    }, 1000)
+  },
+  onUnload() {
+    if (this.countdownTimer) {
+      clearInterval(this.countdownTimer)
+      this.countdownTimer = null
     }
   },
   onShow() {
@@ -43,6 +57,25 @@ export default {
     },
     money(value) {
       return Number(value || 0).toFixed(2).replace(/\.00$/, '')
+    },
+    groupMeta(item) {
+      const seconds = this.remainingSeconds(item.activeTeamExpireAt)
+      if (seconds > 0) {
+        return `拼团时间剩余 ${this.formatDuration(seconds)}`
+      }
+      return `已售 ${item.soldCount || 0}`
+    },
+    remainingSeconds(value) {
+      if (!value) return 0
+      const time = new Date(String(value).replace(/-/g, '/')).getTime()
+      if (!time) return 0
+      return Math.max(0, Math.floor((time - this.nowTime) / 1000))
+    },
+    formatDuration(seconds) {
+      const hours = String(Math.floor(seconds / 3600)).padStart(2, '0')
+      const minutes = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0')
+      const secs = String(seconds % 60).padStart(2, '0')
+      return `${hours}:${minutes}:${secs}`
     },
   },
 }
@@ -110,6 +143,12 @@ export default {
   color: #fff;
   font-size: 34rpx;
   font-weight: 800;
+  overflow: hidden;
+}
+
+.cover image {
+  width: 100%;
+  height: 100%;
 }
 
 .info {

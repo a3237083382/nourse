@@ -32,6 +32,13 @@ public class AppHomeController {
             where enabled = 1 and deleted = 0
             order by sort_no asc, id asc
             """);
+        List<Map<String, Object>> staffCategories = jdbcTemplate.queryForList("""
+            select id, name, icon_url iconUrl, sort_no sortNo
+            from service_category
+            where enabled = 1 and deleted = 0
+              and name in ('月嫂', '保姆', '育婴师')
+            order by sort_no asc, id asc
+            """);
         List<Map<String, Object>> staff = jdbcTemplate.queryForList("""
             select id, name, avatar_url avatarUrl, city, district, salary_min salaryMin, salary_max salaryMax,
                    salary_unit salaryUnit, service_desc serviceDesc
@@ -42,7 +49,24 @@ public class AppHomeController {
             """);
         List<Map<String, Object>> groupProducts = jdbcTemplate.queryForList("""
             select id, title, cover_url coverUrl, original_price originalPrice,
-                   single_price price, group_price groupPrice, sold_count soldCount
+                   single_price price, single_price singlePrice, group_price groupPrice,
+                   group_size groupSize, sold_count soldCount,
+                   (
+                       select min(t.expire_at)
+                       from group_team t
+                       where t.product_id = group_product.id
+                         and t.deleted = 0
+                         and t.status = 'GROUPING'
+                         and t.expire_at > now()
+                   ) activeTeamExpireAt,
+                   (
+                       select count(1)
+                       from group_team t
+                       where t.product_id = group_product.id
+                         and t.deleted = 0
+                         and t.status = 'GROUPING'
+                         and t.expire_at > now()
+                   ) activeTeamCount
             from group_product
             where deleted = 0 and status = 'ONLINE'
             order by id desc
@@ -70,6 +94,7 @@ public class AppHomeController {
         return R.ok(Map.of(
             "banners", banners,
             "categories", categories,
+            "staffCategories", staffCategories,
             "signSuccessTips", signTips,
             "groupProducts", groupProducts,
             "recommendedStaff", staff

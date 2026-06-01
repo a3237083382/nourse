@@ -29,13 +29,43 @@
         <text class="meta">关联需求：{{ detail.demandTitle || '-' }}</text>
         <text class="meta">服务日期：{{ detail.startDate || '-' }} 至 {{ detail.endDate || '-' }}</text>
         <text class="meta">后台备注：{{ detail.adminNote || '-' }}</text>
+        <view class="flow">
+          <view v-for="step in serviceFlow" :key="step.value" class="flow-step" :class="{ done: isFlowDone(step.value) }">
+            <view class="flow-dot">{{ step.index }}</view>
+            <text>{{ step.label }}</text>
+          </view>
+        </view>
+        <view v-if="detail.reviewId" class="review">
+          <text class="review-title">用户评价</text>
+          <text class="stars">{{ stars(detail.reviewRating) }}</text>
+          <text class="review-content">{{ detail.reviewContent || '用户未填写文字评价' }}</text>
+        </view>
+        <view v-else-if="detail.status === 'COMPLETED'" class="review">
+          <text class="review-title">评价本次服务</text>
+          <view class="star-row">
+            <text
+              v-for="score in [1, 2, 3, 4, 5]"
+              :key="score"
+              class="star"
+              :class="{ active: reviewForm.rating >= score }"
+              @tap="reviewForm.rating = score"
+            >★</text>
+          </view>
+          <textarea
+            v-model="reviewForm.content"
+            class="review-input"
+            maxlength="512"
+            placeholder="写下这次服务体验，方便平台持续改进"
+          />
+          <button class="review-button" @tap="submitReview">提交评价</button>
+        </view>
       </view>
     </view>
   </view>
 </template>
 
 <script>
-import { getServiceOrderDetail, getServiceOrderList } from '@/services/api'
+import { getServiceOrderDetail, getServiceOrderList, reviewServiceOrder } from '@/services/api'
 import { ensureLogin } from '@/services/request'
 
 export default {
@@ -44,6 +74,16 @@ export default {
       status: '',
       orders: [],
       detail: null,
+      reviewForm: {
+        rating: 5,
+        content: '',
+      },
+      serviceFlow: [
+        { index: 1, label: '面试', value: 'INTERVIEW' },
+        { index: 2, label: '签约', value: 'SIGNED' },
+        { index: 3, label: '上户', value: 'SERVING' },
+        { index: 4, label: '服务完成', value: 'COMPLETED' },
+      ],
       tabs: [
         { label: '全部', value: '' },
         { label: '待开始', value: 'WAIT_START' },
@@ -70,9 +110,28 @@ export default {
     async openDetail(item) {
       const res = await getServiceOrderDetail(item.id)
       this.detail = res.data
+      this.reviewForm = { rating: 5, content: '' }
+    },
+    async submitReview() {
+      if (!this.detail) return
+      await reviewServiceOrder(this.detail.id, this.reviewForm)
+      uni.showToast({ title: '评价成功', icon: 'success' })
+      const res = await getServiceOrderDetail(this.detail.id)
+      this.detail = res.data
+      this.loadOrders()
     },
     statusText(value) {
       return { WAIT_START: '待开始', SERVING: '服务中', COMPLETED: '已完成', CANCELED: '已取消' }[value] || value || '-'
+    },
+    isFlowDone(value) {
+      if (!this.detail) return false
+      const rank = { WAIT_START: 2, SERVING: 3, COMPLETED: 4, CANCELED: 0 }[this.detail.status] || 0
+      const stepRank = { INTERVIEW: 1, SIGNED: 2, SERVING: 3, COMPLETED: 4 }[value] || 0
+      return rank >= stepRank
+    },
+    stars(value) {
+      const score = Number(value || 0)
+      return '★★★★★'.slice(0, score) + '☆☆☆☆☆'.slice(0, Math.max(0, 5 - score))
     },
     money(value) {
       return Number(value || 0).toFixed(2).replace(/\.00$/, '')
@@ -181,5 +240,118 @@ export default {
 .close {
   color: #e84d64;
   font-size: 26rpx;
+}
+
+.flow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+  margin-top: 28rpx;
+  padding: 24rpx 0 8rpx;
+  border-top: 1px solid #edf0f3;
+}
+
+.flow-step {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10rpx;
+  color: #9aa1aa;
+  font-size: 23rpx;
+}
+
+.flow-dot {
+  display: flex;
+  width: 54rpx;
+  height: 54rpx;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #eef0f2;
+  color: #9aa1aa;
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.flow-step.done {
+  color: #ef3f5f;
+  font-weight: 700;
+}
+
+.flow-step.done .flow-dot {
+  background: #ffe9ee;
+  color: #ef3f5f;
+}
+
+.review {
+  margin-top: 24rpx;
+  padding: 24rpx;
+  border-radius: 20rpx;
+  background: #f7f8f5;
+}
+
+.review-title,
+.review-content,
+.stars {
+  display: block;
+}
+
+.review-title {
+  color: #20242c;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.stars {
+  margin-top: 12rpx;
+  color: #ff9f1c;
+  font-size: 32rpx;
+  letter-spacing: 0;
+}
+
+.review-content {
+  margin-top: 10rpx;
+  color: #68717a;
+  font-size: 25rpx;
+  line-height: 1.6;
+}
+
+.star-row {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 12rpx;
+}
+
+.star {
+  color: #d4d8dd;
+  font-size: 44rpx;
+  line-height: 1;
+}
+
+.star.active {
+  color: #ff9f1c;
+}
+
+.review-input {
+  width: 100%;
+  height: 150rpx;
+  box-sizing: border-box;
+  margin-top: 18rpx;
+  padding: 18rpx;
+  border-radius: 16rpx;
+  background: #fff;
+  color: #3b414c;
+  font-size: 25rpx;
+}
+
+.review-button {
+  height: 72rpx;
+  line-height: 72rpx;
+  margin-top: 18rpx;
+  border-radius: 16rpx;
+  background: #ef3f5f;
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 700;
 }
 </style>

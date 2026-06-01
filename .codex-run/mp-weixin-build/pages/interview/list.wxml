@@ -1,0 +1,1 @@
+<view class="page"><view wx:if="{{a}}" class="empty">暂无邀约记录</view><view wx:for="{{b}}" wx:for-item="item" wx:key="g" class="card" bindtap="{{item.h}}"><view class="row"><text class="title">{{item.a}}</text><text class="status">{{item.b}}</text></view><text class="meta">{{item.c}} · {{item.d}} · {{item.e}}</text><text class="meta">提交时间：{{item.f}}</text></view></view>

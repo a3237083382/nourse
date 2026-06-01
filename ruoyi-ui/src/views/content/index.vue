@@ -21,7 +21,19 @@
           <template #default="{ row }">{{ typeText(row.contentType) }}</template>
         </el-table-column>
         <el-table-column label="标题" prop="title" min-width="180" />
-        <el-table-column label="图片" prop="imageUrl" min-width="220" show-overflow-tooltip />
+        <el-table-column label="图片" prop="imageUrl" width="120" align="center">
+          <template #default="{ row }">
+            <el-image
+              v-if="row.imageUrl"
+              class="table-image"
+              :src="row.imageUrl"
+              :preview-src-list="[row.imageUrl]"
+              preview-teleported
+              fit="cover"
+            />
+            <span v-else class="text-gray-400">未上传</span>
+          </template>
+        </el-table-column>
         <el-table-column label="内容" prop="content" min-width="260" show-overflow-tooltip />
         <el-table-column label="排序" prop="sortNo" width="90" align="center" />
         <el-table-column label="状态" width="100" align="center">
@@ -56,8 +68,22 @@
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" maxlength="128" show-word-limit />
         </el-form-item>
-        <el-form-item label="图片地址">
-          <el-input v-model="form.imageUrl" maxlength="512" show-word-limit />
+        <el-form-item label="图片">
+          <div class="image-upload-row">
+            <el-upload
+              class="content-image-uploader"
+              :action="uploadUrl"
+              :headers="uploadHeaders"
+              :show-file-list="false"
+              :on-success="handleImageSuccess"
+              :before-upload="beforeImageUpload"
+              accept=".png,.jpg,.jpeg,.webp"
+            >
+              <img v-if="form.imageUrl" :src="form.imageUrl" class="uploaded-image" />
+              <el-icon v-else class="image-uploader-icon"><Plus /></el-icon>
+            </el-upload>
+            <el-button v-if="form.imageUrl" plain type="danger" @click="form.imageUrl = ''">移除图片</el-button>
+          </div>
         </el-form-item>
         <el-form-item label="内容">
           <el-input v-model="form.content" type="textarea" :rows="8" />
@@ -81,7 +107,9 @@
 import { onMounted, reactive, ref } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
+import { Plus } from '@element-plus/icons-vue';
 import { addContent, listContent, updateContent, updateContentStatus } from '@/api/content/content';
+import { globalHeaders } from '@/utils/request';
 
 const contentTypes = [
   { label: '首页轮播', value: 'BANNER' },
@@ -112,6 +140,8 @@ const form = reactive<any>({
   sortNo: 0,
   enabled: true
 });
+const uploadUrl = `${import.meta.env.VITE_APP_BASE_API}/resource/oss/upload`;
+const uploadHeaders = globalHeaders();
 const rules: FormRules = {
   contentType: [{ required: true, message: '请选择内容类型', trigger: 'change' }],
   title: [{ required: true, message: '请输入标题', trigger: 'blur' }]
@@ -185,6 +215,28 @@ const submitForm = async () => {
   getList();
 };
 
+const beforeImageUpload = (rawFile: File) => {
+  const allowTypes = ['image/png', 'image/jpeg', 'image/webp'];
+  if (!allowTypes.includes(rawFile.type)) {
+    ElMessage.error('请上传 PNG、JPG、JPEG 或 WebP 图片');
+    return false;
+  }
+  if (rawFile.size / 1024 / 1024 > 5) {
+    ElMessage.error('图片大小不能超过 5MB');
+    return false;
+  }
+  return true;
+};
+
+const handleImageSuccess = (res: any) => {
+  if (res.code !== 200) {
+    ElMessage.error(res.msg || '上传失败');
+    return;
+  }
+  form.imageUrl = res.data.url;
+  ElMessage.success('图片已上传');
+};
+
 const handleStatus = async (row: any, value: string | number | boolean) => {
   await updateContentStatus(row.id, !!value);
   ElMessage.success('状态已更新');
@@ -193,3 +245,43 @@ const handleStatus = async (row: any, value: string | number | boolean) => {
 
 onMounted(getList);
 </script>
+
+<style scoped>
+.table-image {
+  width: 64px;
+  height: 44px;
+  border-radius: 6px;
+}
+
+.image-upload-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.content-image-uploader :deep(.el-upload) {
+  width: 148px;
+  height: 104px;
+  overflow: hidden;
+  border: 1px dashed var(--el-border-color);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.content-image-uploader :deep(.el-upload:hover) {
+  border-color: var(--el-color-primary);
+}
+
+.uploaded-image {
+  width: 148px;
+  height: 104px;
+  object-fit: cover;
+}
+
+.image-uploader-icon {
+  width: 148px;
+  height: 104px;
+  color: #8c939d;
+  font-size: 28px;
+}
+</style>

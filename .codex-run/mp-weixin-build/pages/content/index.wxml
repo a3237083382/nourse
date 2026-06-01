@@ -1,0 +1,1 @@
+<view class="page"><view wx:if="{{a}}" class="empty">暂无内容</view><view wx:for="{{b}}" wx:for-item="item" wx:key="e" class="card"><text class="title">{{item.a}}</text><image wx:if="{{item.b}}" class="image" src="{{item.c}}" mode="aspectFill"/><text class="content">{{item.d}}</text></view></view>

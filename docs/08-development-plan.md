@@ -38,10 +38,13 @@
 - [x] 完成预约面试提交、后台处理、用户端我的邀约。
 - [ ] 完成合同管理和用户端合同查看。
 - [x] 完成服务订单管理和用户端服务订单查看。
+- [x] 完成服务订单完成后的用户评价和阿姨详情评价展示。
 - [x] 完成团购商品管理、小程序团购列表和详情。
 - [x] 完成单独购买、模拟支付、团购订单。
 - [x] 完成发起拼团、加入拼团、满员成功。
+- [x] 完成团购订单已使用后的用户评价。
 - [x] 完成内容管理：首页轮播、签约提示、FAQ、协议、隐私政策、关于我们。
+- [x] 完成内容配置图片上传控件，后台不再要求手工输入图片地址。
 - [x] 完成系统消息列表、已读、合同创建消息、拼团成功消息。
 - [x] 完成微信开发者工具预览测试。
 - [ ] 完成小程序真机预览测试。
@@ -275,6 +278,7 @@
 - [x] 实现首页服务分类入口。
 - [x] 实现首页签约成功提示。
 - [x] 实现首页团购推荐区。
+- [x] 实现首页轮播、签约提示、职业分类、团购活动和分类阿姨分页加载新版布局。
 - [x] 实现找阿姨列表页。
 - [x] 实现按姓名搜索。
 - [x] 实现年龄筛选。
@@ -294,6 +298,7 @@
 
 - [x] 首页能展示后台配置数据。
 - [x] 分类入口能跳转到对应服务人员列表。
+- [x] 首页分类切换后能在首页直接分页加载对应服务人员。
 - [x] 搜索和筛选结果正确。
 - [x] 详情页数据完整。
 - [x] 收藏后“我的收藏”能看到。
@@ -413,6 +418,8 @@
 - [x] 实现服务订单状态修改。
 - [x] 实现小程序服务订单列表。
 - [x] 实现小程序服务订单详情。
+- [x] 实现服务订单已完成后的用户评价。
+- [x] 实现阿姨详情页用户评价展示。
 
 验证：
 
@@ -420,6 +427,7 @@
 - [x] 合同状态支持已签署和已终止。
 - [x] 后台创建服务订单后，用户端服务订单能看到。
 - [x] 服务订单支持待开始、服务中、已完成、已取消。
+- [x] 已完成服务订单可提交一次 1-5 分评价，详情可回显评价。
 
 阶段九验证记录：
 
@@ -427,7 +435,9 @@
 - 管理后台构建：使用 Node 24 执行 `npm run build:dev`，结果通过。
 - 小程序构建：`npm run build:mp-weixin`，结果通过。
 - 接口冒烟：小程序合同列表返回 `total = 1`，服务订单列表返回 `total = 1`；后台合同列表、服务订单列表用管理员 token 访问均返回 `code = 200`。
+- 合同文件查看补测：小程序合同详情点击文件时，图片走 `uni.previewImage`，PDF/Word/Excel/PPT 走 `uni.downloadFile` + `uni.openDocument`；本地测试占位合同由后端生成 PNG 预览图，接口返回 `image/png` 且图片流校验通过。
 - 合同上传控件已接入 `/resource/oss/upload`，但未执行真实文件上传验证，避免把本地文件外发到 OSS；该 TODO 暂不打勾。
+- 服务订单评价补测：本地测试订单 `SO-TEST-001` 置为 `COMPLETED` 后，`POST /api/app/service-orders/1/review` 返回 `code = 200`，订单详情回显 `reviewRating = 5`，阿姨详情评价列表可见。
 
 注意事项：
 
@@ -461,6 +471,7 @@
 - [x] 实现后台拼团列表。
 - [x] 实现后台团购订单列表。
 - [x] 实现后台标记订单已使用。
+- [x] 实现团购订单已使用后的用户评价。
 
 验证：
 
@@ -470,6 +481,7 @@
 - [x] 加入拼团满员后，拼团状态变为拼团成功。
 - [x] 拼团成功后参与订单变为待使用。
 - [x] 后台可以查看拼团和团购订单。
+- [x] 已使用团购订单可提交一次 1-5 分评价，详情可回显评价。
 
 阶段十验证记录：
 
@@ -477,6 +489,7 @@
 - 小程序团购订单接口返回测试用户订单；单独购买接口返回 `code = 200`，发起拼团接口返回 `code = 200`。
 - 使用辅助测试用户加入拼团后，数据库验证 `group_team.status = SUCCESS`、`joined_count = 2`，关联两条 `group_order.status = WAIT_USE`。
 - 后台团购商品、拼团记录、团购订单接口用管理员 token 访问均返回 `code = 200`。
+- 团购订单评价补测：本地测试订单 `GO-TEST-SINGLE-001` 置为 `USED` 后，`POST /api/app/group-orders/1/review` 返回 `code = 200`，订单详情回显 `reviewRating = 4`。
 
 注意事项：
 
@@ -486,7 +499,7 @@
 
 完成后只更新本文档：
 
-- [ ] 本文档“阶段十：团购商品、拼团、团购订单”相关项。
+- [x] 本文档“阶段十：团购商品、拼团、团购订单”相关项。
 
 ## 12. 阶段十一：内容管理和系统消息
 
@@ -500,6 +513,7 @@
 - [x] 实现后台用户协议管理。
 - [x] 实现后台隐私政策管理。
 - [x] 实现后台关于我们管理。
+- [x] 实现后台内容配置图片上传控件。
 - [x] 实现小程序消息列表。
 - [x] 实现消息已读。
 - [x] 需求审核通过生成消息。
@@ -511,6 +525,7 @@
 验证：
 
 - [x] 后台编辑首页轮播后，小程序首页展示最新轮播。
+- [x] 后台内容配置图片可通过上传控件选择文件。
 - [x] 后台编辑协议、隐私政策、关于我们后，小程序可查看。
 - [x] 关键业务动作后，用户消息列表出现对应消息。
 - [x] 消息可标记已读。
@@ -529,6 +544,7 @@
 - 管理后台构建：使用 Node 24 执行 `node node_modules/vite/bin/vite.js build --mode production`，结果通过。直接运行 `npm run build:prod` 时本机默认 Node 18.20.0 不满足 Vite 7 的 Node 20.19+ 要求，因此改用 Codex bundled Node 24.14.0 验证。
 - 小程序构建：`npm run build:mp-weixin`，结果通过。
 - 内容管理已接通：后台内容配置统一维护首页轮播、签约提示、常见问题、用户协议、隐私政策、关于我们；小程序首页读取轮播和签约提示；我的页可打开 FAQ、协议、隐私政策、关于我们。
+- 内容配置图片上传控件已接入 `/resource/oss/upload`，管理端生产构建通过；本地未真实上传 OSS 文件，避免外发本机测试文件。
 - 系统消息已接通：需求审核通过、需求审核拒绝、后台推荐阿姨、合同创建、拼团状态改为 `SUCCESS` 时生成站内消息。
 
 注意事项：
@@ -556,9 +572,12 @@
 - [x] 完成预约面试流程验证。
 - [x] 完成合同查看流程验证。
 - [x] 完成服务订单查看流程验证。
+- [x] 完成服务订单评价流程验证。
 - [x] 完成单独购买流程验证。
 - [x] 完成发起拼团和加入拼团流程验证。
+- [x] 完成团购订单评价流程验证。
 - [x] 完成后台内容管理验证。
+- [x] 完成小程序首页新版布局和微信开发者工具预览验证。
 - [x] 更新本文档 TODO 状态。
 - [x] 整理剩余问题清单。
 
@@ -582,6 +601,17 @@
 - 验证命令已通过：`mvn -pl ruoyi-admin -am -DskipTests package`、`mvn -pl ruoyi-admin -Pdev -DskipTests=false '-Dtest=ContentConfigServiceTest,SystemMessageServiceTest' test`、管理后台生产构建、小程序 `npm run build:mp-weixin`。
 - 已完成微信开发者工具预览测试：打开当前小程序构建产物后，人工预览首页、找阿姨、阿姨详情、预约面试表单展示、消息、合同页面；消息和合同使用当前后端测试数据正常展示中文内容，无问号乱码。
 - 已完成管理后台与小程序同库联调补测：管理员加密登录、后台合同/需求/预约/服务订单/团购/内容接口、小程序 mock 登录、合同/消息/需求读取共 14 项检查通过。
+- 本次首页和评价补测：新增 `service_order_review`、`group_order_review`，执行 `sql/007_add_reviews.sql` 成功；后端 `mvn -pl ruoyi-admin -am -DskipTests package` 通过；管理端生产构建通过；小程序 `npm run build:mp-weixin` 通过。
+- 小程序接口补测：`GET /api/app/home` 返回 `categoryCount = 8`、`groupCount = 2`；`GET /api/app/staff?categoryId=1&pageNum=1&pageSize=2` 返回 `staffTotal = 4`；服务订单和团购订单评价提交均返回 `code = 200` 并在详情回显评分。
+- 微信开发者工具预览补测：首页展示轮播图、签约提示、2 条团购活动、8 个职业分类；点击团购“更多”进入团购列表且显示全部 2 条；切换职业分类后首页人员列表随分类刷新，滚动到底展示“没有更多了”。
+- 2026-06-01 首页顺序和团购展示补调：小程序首页改为轮播、签约提示、职业分类、团购活动、职业 Tab、分类阿姨列表；职业分类和底部职业 Tab 均读取后台服务分类启用状态，可由后台新增、禁用和排序；团购首页和团购列表去掉“几人团”文案，改为“已售 X”，有进行中拼团时显示“拼团时间剩余 HH:mm:ss”；后端 `GET /api/app/home` 与 `GET /api/app/group-products` 补充 `activeTeamExpireAt`、`activeTeamCount` 字段。
+- 2026-06-01 验证命令通过：后端 `mvn -pl ruoyi-admin -am -DskipTests compile`，小程序 `UNI_OUTPUT_DIR=D:\work\miniprogram\.codex-run\mp-weixin-build npm run build:mp-weixin`，管理后台 `node node_modules/vite/bin/vite.js build --mode production`。已使用 `@电脑/computer-use` 连接微信开发者工具并截图验证：首页展示顺序为轮播、签约动态、服务分类、团购活动、职业 Tab、分类阿姨列表；点击团购“更多”进入团购列表；找阿姨页中文和底部导航正常显示。
+- 2026-06-01 找阿姨页调整：底部 Tab 的“找阿姨”改为发布需求表单，页面包含头图、标题、服务类型按钮、月嫂周期、姓名电话、性别、是否住家、薪资、区域、详细地址、工作日期和备注；发布前展示表单，点击发布时再触发 mock 登录和提交需求。验证：`npm run build:mp-weixin` 通过，微信开发者工具中点击底部“找阿姨”可正常展示发布需求表单并可滚动到底部字段。
+- 2026-06-01 我的页对比调整：使用 `@电脑/computer-use` 打开金职到家“我的”页对比，按其核心信息架构调整本系统“我的”页为顶部用户渐变区、设置入口、“我的订单”团购订单/服务订单两入口、功能菜单列表、退出登录；菜单保留本系统的我的需求、我的邀约、我的收藏、我的推荐、常见问题、用户协议、隐私政策、联系客服、关于我们。验证：`npm run build:mp-weixin` 通过，微信开发者工具中“我的”页顶部和底部菜单均已截图确认。
+- 2026-06-01 首页和找阿姨空白补修：移除误用的根级 `form.vue`，恢复 `pages/staff/index.vue` 与 `pages/demand/form.vue` 为独立发布需求页面，避免微信开发者工具加载底部“找阿姨”时出现空白；新增 `sql/008_home_visual_test_data.sql` 和 3 张本地 banner 图片，写入 3 条轮播、3 条签约动态，并补充保姆、育婴师测试服务人员；小程序端分类接口和首页分类收敛为月嫂、保姆、育婴师 3 类。验证：执行 `sql/008_home_visual_test_data.sql` 成功；后端 `mvn -pl ruoyi-admin -am -DskipTests clean package` 通过并重启 8081；`GET /api/app/home` 返回 3 张 banner、3 条 `signSuccessTips`、3 个分类；`GET /api/app/categories` 仅返回月嫂、保姆、育婴师；`GET /api/app/staff?categoryId=1/2/3` 分别返回 4、1、2 条服务人员；小程序 `UNI_OUTPUT_DIR=D:\work\miniprogram\.codex-run\mp-weixin-build npm run build:mp-weixin` 通过，构建产物包含 3 张 banner 且 `pages/staff/index.wxml` 包含发布需求表单内容。
+- 2026-06-01 首页分类数量修正和手机号快捷登录：按最新反馈调整为团购活动上方服务入口展示 8 个服务分类，团购活动下方人员 Tab 仅展示月嫂、保姆、育婴师 3 个；首页团购活动最多展示 3 个商品，并在测试数据中补充第 3 个团购商品；“我的”页新增 `open-type="getPhoneNumber"` 手机号快捷登录入口，本地 tourist AppID 环境使用 `/api/app/auth/phone-login` 模拟手机号登录兜底。验证：执行 `sql/008_home_visual_test_data.sql` 成功；后端 `mvn -pl ruoyi-admin -am -DskipTests package` 通过并重启 8081；`GET /api/app/home` 返回 `categoryCount = 8`、`staffCategoryCount = 3`、`groupCount = 3`；`POST /api/app/auth/phone-login` 返回 `code = 200` 且有 token；小程序 `UNI_OUTPUT_DIR=D:\work\miniprogram\.codex-run\mp-weixin-build npm run build:mp-weixin` 通过，构建产物中“我的”页包含手机号快捷登录按钮。
+- 2026-06-01 我的设置改为个人资料：修正“我的”页设置入口误跳“关于我们”的问题，新增 `pages/mine/user-profile` 个人资料页，页面包含头像、昵称、联系电话和确定按钮；联系电话读取手机号快捷登录绑定的手机号并只读展示，昵称支持输入修改，头像支持微信 `chooseAvatar` 选择并随资料保存；后端补齐 `PUT /api/app/user/profile`，保存昵称和头像到 `app_user`，手机号登录不再覆盖用户已修改昵称。验证：后端初次打包因 8081 运行进程占用 `ruoyi-admin.jar` 失败，停止占用进程后重跑 `mvn -pl ruoyi-admin -am -DskipTests package` 通过并重启 8081；接口烟测 `POST /api/app/auth/phone-login`、`GET /api/app/user/profile`、`PUT /api/app/user/profile` 均返回 `code = 200`，手机号回显为登录手机号，昵称和头像可更新；小程序 `UNI_OUTPUT_DIR=D:\work\miniprogram\.codex-run\mp-weixin-build npm run build:mp-weixin` 通过，构建产物包含个人资料页、头像选择、昵称、联系电话和确定按钮。
+- 2026-06-01 微信开发者工具个人资料页复测：按反馈使用 `@电脑/computer-use` 进入微信开发者工具复测，发现开发者工具实际导入的是 `miniapp/dist/dev/mp-weixin`，其中旧 `pages/mine/profile.wxml` 仍是 `<text>pages/mine/profile.wxml</text>` 占位产物；已将页面路由改为 `pages/mine/user-profile` 并把最新产物构建到开发者工具当前目录。验证：`UNI_OUTPUT_DIR=D:\work\miniprogram\miniapp\dist\dev\mp-weixin npm run build:mp-weixin` 通过；`dist/dev/mp-weixin/app.json` 仅包含 `pages/mine/user-profile`，不再包含旧 `pages/mine/profile`；使用 `@电脑/computer-use` 在微信开发者工具中点击“我的 -> 设置”，页面正常显示头像、昵称、联系电话、确定按钮，输入昵称 `testuser` 后点击确定，出现“保存成功”并返回“我的”页，顶部昵称同步显示为 `testuser`。
 - 仍未完成：小程序真机预览测试；原因是本轮只进入微信开发者工具环境，未连接真实手机预览。
 - 仍未纳入第一版本地闭环：真实微信手机号授权、正式 AppID、正式 HTTPS 域名、真实微信支付、真实 OSS 合同上传、正式项目名称/Logo/客服电话/公司介绍。
 

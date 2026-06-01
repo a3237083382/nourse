@@ -33,7 +33,23 @@ public class AppGroupProductController {
         List<Map<String, Object>> rows = jdbcTemplate.queryForList("""
             select id, title, cover_url coverUrl, original_price originalPrice,
                    single_price singlePrice, group_price groupPrice, group_size groupSize,
-                   valid_days validDays, sold_count soldCount, notice, guarantee, description
+                   valid_days validDays, sold_count soldCount, notice, guarantee, description,
+                   (
+                       select min(t.expire_at)
+                       from group_team t
+                       where t.product_id = group_product.id
+                         and t.deleted = 0
+                         and t.status = 'GROUPING'
+                         and t.expire_at > now()
+                   ) activeTeamExpireAt,
+                   (
+                       select count(1)
+                       from group_team t
+                       where t.product_id = group_product.id
+                         and t.deleted = 0
+                         and t.status = 'GROUPING'
+                         and t.expire_at > now()
+                   ) activeTeamCount
             from group_product
             where deleted = 0 and status = 'ONLINE'
             order by id desc

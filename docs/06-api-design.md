@@ -40,6 +40,14 @@
 - `GET /api/app/categories`：服务分类。
 - `GET /api/app/sign-success-tips`：签约成功提示。
 
+首页聚合数据包含：
+
+- 自动轮播图。
+- 签约成功提示轮播。
+- 服务分类/职业入口。
+- 首页团购活动列表，前端首页展示前 2 条，更多进入团购列表；每条团购返回 `soldCount`、`activeTeamExpireAt`、`activeTeamCount`，用于展示已售数量或进行中拼团倒计时。
+- 服务人员可按 `categoryId` 分页加载，用于首页分类切换和上拉加载。
+
 ### 2.3 服务人员
 
 - `GET /api/app/staff`：服务人员列表。
@@ -84,6 +92,16 @@
 
 - `GET /api/app/service-orders`：服务订单列表。
 - `GET /api/app/service-orders/{id}`：服务订单详情。
+- `POST /api/app/service-orders/{id}/review`：服务完成后提交评价。
+
+服务订单评价请求体：
+
+```json
+{
+  "rating": 5,
+  "content": "服务认真，沟通顺畅"
+}
+```
 
 ### 2.8 团购商品
 
@@ -99,6 +117,16 @@
 - `POST /api/app/group-orders/{id}/mock-pay`：模拟支付。
 - `GET /api/app/group-orders`：团购订单列表。
 - `GET /api/app/group-orders/{id}`：团购订单详情。
+- `POST /api/app/group-orders/{id}/review`：团购服务使用完成后提交评价。
+
+团购订单评价请求体：
+
+```json
+{
+  "rating": 5,
+  "content": "服务体验良好"
+}
+```
 
 ### 2.10 消息和内容
 
@@ -201,9 +229,14 @@
 - `PUT /api/admin/content/{id}`：编辑内容。
 - `PUT /api/admin/content/{id}/status`：启用或禁用。
 
+说明：
+
+- 首页轮播图等带图片内容在管理端通过上传控件选择文件，不要求管理员手工输入图片地址。
+
 ### 3.13 文件上传
 
 - `POST /api/file/upload`：上传文件到 OSS。
+- `POST /resource/oss/upload`：RuoYi 管理端通用 OSS 上传入口，内容配置和合同上传控件复用。
 
 上传类型：
 
@@ -227,4 +260,3 @@
 - 后台上传合同，用户合同页可见。
 - 后台创建团购商品，用户可单独购买和拼团购买。
 - 用户加入别人拼团，满员后拼团成功。
-

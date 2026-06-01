@@ -1,0 +1,1 @@
+<view class="page"><view wx:if="{{a}}" class="empty">暂无系统消息</view><view wx:for="{{b}}" wx:for-item="item" wx:key="e" class="{{['message', item.f && 'unread']}}" bindtap="{{item.g}}"><view class="row"><text class="title">{{item.a}}</text><text wx:if="{{item.b}}" class="badge">未读</text></view><text class="content">{{item.c}}</text><text class="time">{{item.d}}</text></view></view>

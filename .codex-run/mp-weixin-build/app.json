@@ -1,0 +1,67 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/contract/index",
+    "pages/staff/index",
+    "pages/staff/detail",
+    "pages/demand/form",
+    "pages/demand/list",
+    "pages/demand/detail",
+    "pages/interview/form",
+    "pages/interview/list",
+    "pages/interview/detail",
+    "pages/order/service",
+    "pages/group/list",
+    "pages/group/detail",
+    "pages/group/orders",
+    "pages/message/index",
+    "pages/content/index",
+    "pages/mine/index",
+    "pages/mine/profile"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "到家服务",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#f6f7f9"
+  },
+  "tabBar": {
+    "color": "#8a8f99",
+    "selectedColor": "#ef3f5f",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页",
+        "iconPath": "static/tab-home.png",
+        "selectedIconPath": "static/tab-home-active.png"
+      },
+      {
+        "pagePath": "pages/contract/index",
+        "text": "合同",
+        "iconPath": "static/tab-contract.png",
+        "selectedIconPath": "static/tab-contract-active.png"
+      },
+      {
+        "pagePath": "pages/staff/index",
+        "text": "找阿姨",
+        "iconPath": "static/tab-staff.png",
+        "selectedIconPath": "static/tab-staff-active.png"
+      },
+      {
+        "pagePath": "pages/message/index",
+        "text": "消息",
+        "iconPath": "static/tab-message.png",
+        "selectedIconPath": "static/tab-message-active.png"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "我的",
+        "iconPath": "static/tab-mine.png",
+        "selectedIconPath": "static/tab-mine-active.png"
+      }
+    ]
+  },
+  "usingComponents": {}
+}

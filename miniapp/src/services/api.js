@@ -8,6 +8,14 @@ export function getContent(type) {
   return request({ url: `/api/app/content/${type}` })
 }
 
+export function getUserProfile() {
+  return request({ url: '/api/app/user/profile' })
+}
+
+export function updateUserProfile(data) {
+  return request({ url: '/api/app/user/profile', method: 'PUT', data })
+}
+
 export function getCategories() {
   return request({ url: '/api/app/categories' })
 }
@@ -88,6 +96,10 @@ export function getServiceOrderDetail(id) {
   return request({ url: `/api/app/service-orders/${id}` })
 }
 
+export function reviewServiceOrder(id, data) {
+  return request({ url: `/api/app/service-orders/${id}/review`, method: 'POST', data })
+}
+
 export function getGroupProductList(params) {
   return request({ url: '/api/app/group-products', data: params })
 }
@@ -114,4 +126,8 @@ export function getGroupOrderList(params) {
 
 export function getGroupOrderDetail(id) {
   return request({ url: `/api/app/group-orders/${id}` })
+}
+
+export function reviewGroupOrder(id, data) {
+  return request({ url: `/api/app/group-orders/${id}/review`, method: 'POST', data })
 }

@@ -12,7 +12,12 @@
 
       <el-table v-loading="loading" border :data="categoryList">
         <el-table-column label="分类名称" prop="name" min-width="160" />
-        <el-table-column label="图标地址" prop="iconUrl" min-width="220" show-overflow-tooltip />
+        <el-table-column label="图标" prop="iconUrl" width="100" align="center">
+          <template #default="{ row }">
+            <el-image v-if="row.iconUrl" class="table-icon" :src="row.iconUrl" :preview-src-list="[row.iconUrl]" preview-teleported fit="cover" />
+            <span v-else class="text-gray-400">未上传</span>
+          </template>
+        </el-table-column>
         <el-table-column label="排序" prop="sortNo" width="90" align="center" />
         <el-table-column label="启用" width="100" align="center">
           <template #default="{ row }">
@@ -34,8 +39,22 @@
         <el-form-item label="分类名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入分类名称" maxlength="30" />
         </el-form-item>
-        <el-form-item label="图标地址" prop="iconUrl">
-          <el-input v-model="form.iconUrl" placeholder="请输入图标地址" />
+        <el-form-item label="分类图标" prop="iconUrl">
+          <div class="image-upload-row">
+            <el-upload
+              class="category-icon-uploader"
+              :action="uploadUrl"
+              :headers="uploadHeaders"
+              :show-file-list="false"
+              :on-success="handleIconSuccess"
+              :before-upload="beforeIconUpload"
+              accept=".png,.jpg,.jpeg,.webp"
+            >
+              <img v-if="form.iconUrl" :src="form.iconUrl" class="uploaded-icon" />
+              <el-icon v-else class="icon-uploader-placeholder"><Plus /></el-icon>
+            </el-upload>
+            <el-button v-if="form.iconUrl" plain type="danger" @click="form.iconUrl = ''">移除图标</el-button>
+          </div>
         </el-form-item>
         <el-form-item label="排序" prop="sortNo">
           <el-input-number v-model="form.sortNo" :min="0" controls-position="right" />
@@ -58,7 +77,9 @@
 import { onMounted, reactive, ref } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
+import { Plus } from '@element-plus/icons-vue';
 import { addCategory, listCategory, updateCategory, updateCategoryStatus } from '@/api/staff/category';
+import { globalHeaders } from '@/utils/request';
 
 const loading = ref(false);
 const categoryList = ref<any[]>([]);
@@ -74,6 +95,8 @@ const form = reactive<any>({
 const rules: FormRules = {
   name: [{ required: true, message: '分类名称不能为空', trigger: 'blur' }]
 };
+const uploadUrl = `${import.meta.env.VITE_APP_BASE_API}/resource/oss/upload`;
+const uploadHeaders = globalHeaders();
 
 const reset = () => {
   form.id = undefined;
@@ -123,5 +146,67 @@ const submitForm = async () => {
   getList();
 };
 
+const beforeIconUpload = (rawFile: File) => {
+  const allowTypes = ['image/png', 'image/jpeg', 'image/webp'];
+  if (!allowTypes.includes(rawFile.type)) {
+    ElMessage.error('请上传 PNG、JPG、JPEG 或 WebP 图片');
+    return false;
+  }
+  if (rawFile.size / 1024 / 1024 > 5) {
+    ElMessage.error('图片大小不能超过 5MB');
+    return false;
+  }
+  return true;
+};
+
+const handleIconSuccess = (res: any) => {
+  if (res.code !== 200) {
+    ElMessage.error(res.msg || '上传失败');
+    return;
+  }
+  form.iconUrl = res.data.url;
+  ElMessage.success('图标已上传');
+};
+
 onMounted(getList);
 </script>
+
+<style scoped>
+.table-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+}
+
+.image-upload-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.category-icon-uploader :deep(.el-upload) {
+  width: 86px;
+  height: 86px;
+  overflow: hidden;
+  border: 1px dashed var(--el-border-color);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.category-icon-uploader :deep(.el-upload:hover) {
+  border-color: var(--el-color-primary);
+}
+
+.uploaded-icon {
+  width: 86px;
+  height: 86px;
+  object-fit: cover;
+}
+
+.icon-uploader-placeholder {
+  width: 86px;
+  height: 86px;
+  color: #8c939d;
+  font-size: 28px;
+}
+</style>

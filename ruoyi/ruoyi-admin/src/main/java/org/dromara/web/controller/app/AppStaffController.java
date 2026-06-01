@@ -72,6 +72,14 @@ public class AppStaffController {
         staff.put("certificates", childRows("select id, certificate_name certificateName, file_url fileUrl, sort_no sortNo from staff_certificate where staff_id = ? and deleted = 0 order by sort_no asc, id asc", id));
         staff.put("photos", childRows("select id, photo_url photoUrl, sort_no sortNo from staff_photo where staff_id = ? and deleted = 0 order by sort_no asc, id asc", id));
         staff.put("experiences", childRows("select id, start_date startDate, end_date endDate, description from staff_work_experience where staff_id = ? and deleted = 0 order by start_date desc, id desc", id));
+        staff.put("reviews", childRows("""
+            select r.id, r.rating, r.content, r.created_at createdAt, u.nickname userName
+            from service_order_review r
+            left join app_user u on u.id = r.user_id
+            where r.staff_id = ? and r.deleted = 0
+            order by r.id desc
+            limit 10
+            """, id));
         return R.ok(staff);
     }
 

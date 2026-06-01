@@ -25,6 +25,16 @@
     </view>
 
     <view class="panel">
+      <text class="section-title">服务流程</text>
+      <view class="flow">
+        <view v-for="item in flowItems" :key="item.index" class="flow-step">
+          <view class="flow-icon">{{ item.index }}</view>
+          <text>{{ item.label }}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="panel">
       <text class="section-title">平台核验</text>
       <view class="trust-grid">
         <view v-for="item in trustItems" :key="item.title" class="trust">
@@ -62,6 +72,21 @@
       <text v-if="!staff.experiences || !staff.experiences.length" class="muted">暂无经历</text>
     </view>
 
+    <view class="panel">
+      <view class="review-head">
+        <text class="section-title">用户评价</text>
+        <text class="review-count">全部 {{ reviewList.length }}</text>
+      </view>
+      <text v-if="!reviewList.length" class="muted">暂无评价~</text>
+      <view v-for="item in reviewList" :key="item.id" class="review-item">
+        <view class="review-top">
+          <text class="review-user">{{ item.userName || '匿名用户' }}</text>
+          <text class="review-stars">{{ stars(item.rating) }}</text>
+        </view>
+        <text class="paragraph">{{ item.content || '用户未填写文字评价' }}</text>
+      </view>
+    </view>
+
     <view class="actions">
       <button @tap="toggleFavorite">{{ favorited ? '取消收藏' : '收藏' }}</button>
       <button open-type="share">分享</button>
@@ -82,6 +107,12 @@ export default {
       demandId: undefined,
       staff: null,
       favorited: false,
+      flowItems: [
+        { index: 1, label: '面试' },
+        { index: 2, label: '签约' },
+        { index: 3, label: '上户' },
+        { index: 4, label: '服务完成' },
+      ],
       trustItems: [
         { title: '资料登记', desc: '身份与基础资料已在后台留档' },
         { title: '证书记录', desc: '资质证书可由平台人员核对' },
@@ -93,6 +124,9 @@ export default {
   computed: {
     displayPhotos() {
       return ((this.staff && this.staff.photos) || []).filter((item) => this.validImage(item.photoUrl))
+    },
+    reviewList() {
+      return (this.staff && this.staff.reviews) || []
     },
   },
   onLoad(options) {
@@ -133,6 +167,10 @@ export default {
     },
     unitText(value) {
       return { month: '月', MONTH: '月', day: '天', DAY: '天', time: '次', TIME: '次', hour: '小时', HOUR: '小时' }[value] || value || '月'
+    },
+    stars(value) {
+      const score = Number(value || 0)
+      return '★★★★★'.slice(0, score) + '☆☆☆☆☆'.slice(0, Math.max(0, 5 - score))
     },
     validImage(url) {
       return !!url && !String(url).includes('example.com')
@@ -245,6 +283,35 @@ export default {
   margin-top: 18rpx;
 }
 
+.flow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10rpx;
+  margin-top: 24rpx;
+}
+
+.flow-step {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 12rpx;
+  color: #68717a;
+  font-size: 25rpx;
+}
+
+.flow-icon {
+  display: flex;
+  width: 76rpx;
+  height: 76rpx;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #ffe7e2;
+  color: #ef3f5f;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
 .trust {
   display: flex;
   min-height: 96rpx;
@@ -300,6 +367,39 @@ export default {
   padding: 18rpx 0;
   border-top: 1px solid #edf0f3;
   color: #3b414c;
+  font-size: 26rpx;
+}
+
+.review-head,
+.review-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.review-count {
+  color: #ef3f5f;
+  font-size: 25rpx;
+}
+
+.review-item {
+  padding: 20rpx 0;
+  border-top: 1px solid #edf0f3;
+}
+
+.review-item:first-of-type {
+  margin-top: 18rpx;
+}
+
+.review-user {
+  color: #20242c;
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.review-stars {
+  color: #ff9f1c;
   font-size: 26rpx;
 }
 

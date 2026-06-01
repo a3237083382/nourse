@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8081'
+export const BASE_URL = 'http://localhost:8081'
 
 export function getToken() {
   return uni.getStorageSync('appToken') || ''
@@ -67,6 +67,19 @@ async function mockLogin() {
     },
   })
   setToken(login.data.accessToken)
+}
+
+export async function phoneLogin(detail = {}) {
+  const login = await request({
+    url: '/api/app/auth/phone-login',
+    method: 'POST',
+    data: {
+      code: detail.code,
+      phone: detail.phone,
+    },
+  })
+  setToken(login.data.accessToken)
+  return login.data
 }
 
 export function ensureLogin(options = {}) {

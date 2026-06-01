@@ -28,7 +28,14 @@
         <text class="meta">服务类型：{{ detail.categoryName || '-' }}</text>
         <text class="meta">关联需求：{{ detail.demandTitle || '-' }}</text>
         <text class="meta">关联订单：{{ detail.orderNo || '-' }}</text>
-        <button class="primary" @tap="openFile(detail.fileUrl)">查看合同文件</button>
+        <view class="file-card">
+          <view class="file-icon">{{ fileTypeLabel(detail.fileUrl) }}</view>
+          <view class="file-info">
+            <text class="file-title">{{ fileName(detail.fileUrl) }}</text>
+            <text class="file-desc">{{ fileDesc(detail.fileUrl) }}</text>
+          </view>
+        </view>
+        <button class="primary" @tap="openFile(detail)">打开合同文件</button>
       </view>
     </view>
   </view>
@@ -36,7 +43,7 @@
 
 <script>
 import { getContractDetail, getContractList } from '@/services/api'
-import { ensureLogin } from '@/services/request'
+import { BASE_URL, ensureLogin, getToken } from '@/services/request'
 
 export default {
   data() {
@@ -68,20 +75,100 @@ export default {
       const res = await getContractDetail(item.id)
       this.detail = res.data
     },
-    openFile(url) {
+    fileName(url) {
+      if (!url) {
+        return '暂无合同文件'
+      }
+      const cleanUrl = String(url).split('?')[0]
+      const name = cleanUrl.substring(cleanUrl.lastIndexOf('/') + 1)
+      return decodeURIComponent(name || cleanUrl)
+    },
+    fileExt(url) {
+      const path = String(url || '').split('?')[0]
+      const match = path.match(/\.([a-z0-9]+)$/i)
+      return match ? match[1].toLowerCase() : ''
+    },
+    fileTypeLabel(url) {
+      const ext = this.fileExt(url)
+      if (['png', 'jpg', 'jpeg', 'webp'].includes(ext)) {
+        return '图'
+      }
+      if (ext) {
+        return ext.toUpperCase()
+      }
+      return '预览'
+    },
+    fileDesc(url) {
+      const ext = this.fileExt(url)
+      if (['png', 'jpg', 'jpeg', 'webp'].includes(ext)) {
+        return '纸质合同照片，点击后全屏查看'
+      }
+      if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(ext) && this.isRemoteUrl(url)) {
+        return '电子合同文件，点击后打开文档'
+      }
+      return '当前为本地测试合同，将生成图片预览'
+    },
+    isRemoteUrl(url) {
+      return /^https?:\/\//i.test(String(url || ''))
+    },
+    isImage(url) {
+      return /\.(png|jpg|jpeg|webp)(\?.*)?$/i.test(String(url || ''))
+    },
+    isDocument(url) {
+      return /\.(pdf|doc|docx|xls|xlsx|ppt|pptx)(\?.*)?$/i.test(String(url || ''))
+    },
+    downloadFile(url, fileType) {
+      const token = getToken()
+      return new Promise((resolve, reject) => {
+        uni.downloadFile({
+          url,
+          header: token ? { Authorization: `Bearer ${token}`, clientid: 'app' } : {},
+          success: (res) => {
+            if (res.statusCode && res.statusCode !== 200) {
+              reject(new Error(`文件下载失败：${res.statusCode}`))
+              return
+            }
+            resolve({
+              tempFilePath: res.tempFilePath || res.filePath,
+              fileType,
+            })
+          },
+          fail: reject,
+        })
+      })
+    },
+    async openFile(contract) {
+      const url = contract && contract.fileUrl
       if (!url) {
         uni.showToast({ title: '暂无文件', icon: 'none' })
         return
       }
-      if (/\.(png|jpg|jpeg|webp)$/i.test(url)) {
-        uni.previewImage({ urls: [url] })
-        return
+      const remoteUrl = this.isRemoteUrl(url) ? url : `${BASE_URL}/api/app/contracts/${contract.id}/preview-image`
+      const fileType = this.fileExt(remoteUrl)
+      uni.showLoading({ title: '正在打开' })
+      try {
+        const file = await this.downloadFile(remoteUrl, fileType)
+        uni.hideLoading()
+        if (this.isImage(remoteUrl) || !this.isRemoteUrl(url)) {
+          uni.previewImage({ current: file.tempFilePath, urls: [file.tempFilePath] })
+          return
+        }
+        if (this.isDocument(remoteUrl)) {
+          uni.openDocument({
+            filePath: file.tempFilePath,
+            fileType,
+            showMenu: true,
+            fail: () => {
+              uni.showToast({ title: '文档打开失败', icon: 'none' })
+            },
+          })
+          return
+        }
+        uni.showToast({ title: '暂不支持该文件格式', icon: 'none' })
+      } catch (error) {
+        uni.hideLoading()
+        uni.showToast({ title: error.message || '文件打开失败', icon: 'none' })
       }
-      uni.showModal({
-        title: '合同文件',
-        content: url,
-        showCancel: false,
-      })
     },
     statusText(value) {
       return { SIGNED: '已签署', TERMINATED: '已终止' }[value] || value
@@ -192,6 +279,54 @@ export default {
 .close {
   color: #e84d64;
   font-size: 26rpx;
+}
+
+.file-card {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  margin-top: 26rpx;
+  padding: 22rpx;
+  border-radius: 20rpx;
+  background: #f7f3ee;
+}
+
+.file-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96rpx;
+  height: 112rpx;
+  border-radius: 12rpx;
+  background: #fff;
+  color: #b21f3a;
+  font-size: 24rpx;
+  font-weight: 800;
+  box-shadow: inset 0 0 0 1px rgba(178, 31, 58, 0.12);
+}
+
+.file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-title {
+  display: block;
+  overflow: hidden;
+  color: #20242c;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-desc {
+  display: block;
+  margin-top: 8rpx;
+  color: #8a6b4f;
+  font-size: 24rpx;
+  line-height: 1.4;
 }
 
 .primary {

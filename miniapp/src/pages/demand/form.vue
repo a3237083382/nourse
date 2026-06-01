@@ -1,56 +1,116 @@
 <template>
   <view class="page">
-    <view class="form">
-      <view class="field">
-        <text class="label">需求标题</text>
-        <input v-model="form.title" placeholder="例如：急需月嫂到家服务" />
+    <view class="hero">
+      <view class="hero-copy">
+        <text class="hero-question">#你想找什么样的阿姨?</text>
+        <text class="hero-title">发布需求</text>
+        <text class="hero-pill">阿姨主动找上门</text>
       </view>
-      <view class="field">
-        <text class="label">服务类型</text>
-        <picker :range="categories" range-key="name" @change="onCategoryChange">
-          <view class="picker">{{ selectedCategoryName || '请选择服务类型' }}</view>
-        </picker>
-      </view>
-      <view v-if="selectedCategoryName === '月嫂'" class="field">
-        <text class="label">月嫂周期</text>
-        <picker :range="maternityPeriods" @change="onMaternityChange">
-          <view class="picker">{{ form.maternityPeriod || '请选择周期' }}</view>
-        </picker>
-      </view>
-      <view class="field">
-        <text class="label">联系人</text>
-        <input v-model="form.contactName" placeholder="请输入联系人姓名" />
-      </view>
-      <view class="field">
-        <text class="label">联系电话</text>
-        <input v-model="form.contactPhone" type="number" placeholder="请输入联系电话" />
-      </view>
-      <view class="field">
-        <text class="label">是否住家</text>
-        <switch :checked="form.liveIn" @change="form.liveIn = $event.detail.value" />
-      </view>
-      <view class="field">
-        <text class="label">薪资待遇</text>
-        <input v-model="form.expectedSalary" placeholder="例如：8000-10000/月" />
-      </view>
-      <view class="field">
-        <text class="label">城市</text>
-        <input v-model="form.city" placeholder="请输入城市" />
-      </view>
-      <view class="field">
-        <text class="label">区域</text>
-        <input v-model="form.district" placeholder="请输入区域" />
-      </view>
-      <view class="field">
-        <text class="label">详细地址</text>
-        <input v-model="form.address" placeholder="请输入详细地址" />
-      </view>
-      <view class="field">
-        <text class="label">补充说明</text>
-        <textarea v-model="form.remark" placeholder="可填写服务时间、家庭情况等" />
+      <view class="hero-art">
+        <view class="nanny-head"></view>
+        <view class="nanny-body"></view>
+        <view class="baby-head"></view>
+        <view class="baby-body"></view>
       </view>
     </view>
-    <button class="submit" :loading="submitting" @tap="submit">提交需求</button>
+
+    <view class="card title-card">
+      <view class="line-field">
+        <text class="field-label required">标题：</text>
+        <input v-model.trim="form.title" class="line-input" placeholder="请输入" placeholder-class="placeholder" />
+      </view>
+    </view>
+
+    <view class="card service-card">
+      <text class="block-label required">服务类型：</text>
+      <view class="service-grid">
+        <view
+          v-for="item in categories"
+          :key="item.id"
+          class="service-option"
+          :class="{ active: form.categoryId === item.id }"
+          @tap="selectCategory(item)"
+        >
+          {{ item.name }}
+        </view>
+      </view>
+
+      <view v-if="selectedCategoryName === '月嫂'" class="period-panel">
+        <checkbox-group class="period-group" @change="onMaternityChange">
+          <label v-for="item in maternityPeriods" :key="item.value" class="period-option">
+            <checkbox :value="item.value" :checked="form.maternityPeriod === item.value" color="#ff4f5e" />
+            <text>{{ item.label }}</text>
+          </label>
+        </checkbox-group>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="line-field">
+        <text class="field-label required">您的姓名：</text>
+        <input v-model.trim="form.contactName" class="line-input" placeholder="请输入" placeholder-class="placeholder" />
+      </view>
+      <view class="line-field">
+        <text class="field-label required">您的电话：</text>
+        <input v-model.trim="form.contactPhone" class="line-input" type="number" placeholder="请输入" placeholder-class="placeholder" />
+      </view>
+      <picker :range="genderOptions" @change="onGenderChange">
+        <view class="line-field">
+          <text class="field-label required">性别：</text>
+          <text class="picker-value" :class="{ muted: !form.gender }">{{ form.gender || '请选择' }}</text>
+        </view>
+      </picker>
+      <picker :range="liveInOptions" @change="onLiveInChange">
+        <view class="line-field">
+          <text class="field-label required">是否住家：</text>
+          <text class="picker-value" :class="{ muted: form.liveIn === null }">{{ liveInText }}</text>
+        </view>
+      </picker>
+      <picker :range="salaryOptions" @change="onSalaryChange">
+        <view class="line-field">
+          <text class="field-label required">薪资待遇（月/¥）：</text>
+          <text class="picker-value" :class="{ muted: !form.expectedSalary }">{{ form.expectedSalary || '请选择' }}</text>
+        </view>
+      </picker>
+      <picker :range="regionOptions" range-key="label" @change="onRegionChange">
+        <view class="line-field">
+          <text class="field-label required">所在区域：</text>
+          <text class="picker-value" :class="{ muted: !form.district }">{{ regionText || '请选择' }}</text>
+        </view>
+      </picker>
+      <view class="line-field">
+        <text class="field-label required">详细地址：</text>
+        <input v-model.trim="form.address" class="line-input" placeholder="如岳麓区学士街道三月小区" placeholder-class="placeholder" />
+      </view>
+      <view class="date-block">
+        <text class="field-label required">工作日期：</text>
+        <view class="date-row">
+          <picker class="date-picker" mode="date" @change="onStartDateChange">
+            <view class="date-box">
+              <text class="date-icon">□</text>
+              <text :class="{ muted: !form.startDate }">{{ form.startDate || '开始日期' }}</text>
+            </view>
+          </picker>
+          <text class="date-separator">-</text>
+          <picker class="date-picker" mode="date" @change="onEndDateChange">
+            <view class="date-box">
+              <text class="date-icon">□</text>
+              <text :class="{ muted: !form.endDate }">{{ form.endDate || '结束日期' }}</text>
+            </view>
+          </picker>
+        </view>
+      </view>
+    </view>
+
+    <view class="card remark-card">
+      <view class="remark-title">
+        <text>备注</text>
+        <text class="edit-mark">↗</text>
+      </view>
+      <textarea class="remark-textarea" v-model.trim="form.remark" placeholder="请输入" placeholder-class="placeholder" />
+    </view>
+
+    <button class="submit" :loading="submitting" @tap="submit">发布</button>
   </view>
 </template>
 
@@ -58,13 +118,35 @@
 import { createDemand, getCategories } from '@/services/api'
 import { ensureLogin } from '@/services/request'
 
+const genderOptions = ['男', '女']
+const liveInOptions = ['住家', '不住家']
+const salaryOptions = ['6000-8000/月', '8000-10000/月', '10000-15000/月', '15000以上/月', '面议']
+const regionOptions = [
+  { label: '杭州 西湖区', city: '杭州', district: '西湖区' },
+  { label: '杭州 拱墅区', city: '杭州', district: '拱墅区' },
+  { label: '杭州 上城区', city: '杭州', district: '上城区' },
+  { label: '杭州 滨江区', city: '杭州', district: '滨江区' },
+  { label: '长沙 岳麓区', city: '长沙', district: '岳麓区' },
+]
+
 export default {
   data() {
     return {
       categories: [],
-      maternityPeriods: ['26天', '42天', '52天', '78天'],
+      maternityPeriods: [
+        { label: '26天（单月子周期）', value: '26天' },
+        { label: '42天（完整产褥期）', value: '42天' },
+        { label: '52天（双月子周期）', value: '52天' },
+        { label: '78天（大圆满）', value: '78天' },
+      ],
+      genderOptions,
+      liveInOptions,
+      salaryOptions,
+      regionOptions,
       selectedCategoryName: '',
       submitting: false,
+      loaded: false,
+      initialCategoryId: undefined,
       form: {
         title: '',
         categoryId: undefined,
@@ -72,23 +154,51 @@ export default {
         contactName: '',
         contactPhone: '',
         gender: '',
-        liveIn: false,
+        liveIn: null,
         expectedSalary: '',
         city: '',
         district: '',
         address: '',
+        startDate: '',
+        endDate: '',
         remark: '',
       },
     }
   },
-  async onLoad() {
-    await ensureLogin()
-    const res = await getCategories()
-    this.categories = res.data || []
+  computed: {
+    liveInText() {
+      if (this.form.liveIn === true) return '住家'
+      if (this.form.liveIn === false) return '不住家'
+      return '请选择'
+    },
+    regionText() {
+      return [this.form.city, this.form.district].filter(Boolean).join(' ')
+    },
+  },
+  onLoad(options = {}) {
+    this.initialCategoryId = options.categoryId ? Number(options.categoryId) : undefined
+    this.init()
+  },
+  mounted() {
+    this.init()
   },
   methods: {
-    onCategoryChange(event) {
-      const item = this.categories[event.detail.value]
+    async init() {
+      if (this.loaded) return
+      this.loaded = true
+      try {
+        const res = await getCategories()
+        this.categories = res.data || []
+        const initialCategory = this.categories.find((item) => item.id === this.initialCategoryId)
+        if (initialCategory || this.categories.length) {
+          this.selectCategory(initialCategory || this.categories[0])
+        }
+      } catch (error) {
+        this.loaded = false
+        uni.showToast({ title: '服务分类加载失败', icon: 'none' })
+      }
+    },
+    selectCategory(item) {
       this.form.categoryId = item.id
       this.selectedCategoryName = item.name
       if (item.name !== '月嫂') {
@@ -96,23 +206,79 @@ export default {
       }
     },
     onMaternityChange(event) {
-      this.form.maternityPeriod = this.maternityPeriods[event.detail.value]
+      const checked = event.detail.value || []
+      this.form.maternityPeriod = checked[checked.length - 1] || ''
+    },
+    onGenderChange(event) {
+      this.form.gender = this.genderOptions[event.detail.value]
+    },
+    onLiveInChange(event) {
+      this.form.liveIn = this.liveInOptions[event.detail.value] === '住家'
+    },
+    onSalaryChange(event) {
+      this.form.expectedSalary = this.salaryOptions[event.detail.value]
+    },
+    onRegionChange(event) {
+      const item = this.regionOptions[event.detail.value]
+      this.form.city = item.city
+      this.form.district = item.district
+    },
+    onStartDateChange(event) {
+      this.form.startDate = event.detail.value
+    },
+    onEndDateChange(event) {
+      this.form.endDate = event.detail.value
     },
     validate() {
-      if (!this.form.title || !this.form.categoryId || !this.form.contactName || !this.form.contactPhone || !this.form.address) {
-        uni.showToast({ title: '请填写必填信息', icon: 'none' })
+      const required = [
+        this.form.title,
+        this.form.categoryId,
+        this.form.contactName,
+        this.form.contactPhone,
+        this.form.gender,
+        this.form.liveIn !== null ? 'liveIn' : '',
+        this.form.expectedSalary,
+        this.form.district,
+        this.form.address,
+        this.form.startDate,
+        this.form.endDate,
+      ]
+      if (required.some((item) => item === undefined || item === null || item === '')) {
+        uni.showToast({ title: '请填写完整需求信息', icon: 'none' })
+        return false
+      }
+      if (this.selectedCategoryName === '月嫂' && !this.form.maternityPeriod) {
+        uni.showToast({ title: '请选择月嫂周期', icon: 'none' })
         return false
       }
       return true
+    },
+    buildRemark() {
+      const dates = `工作日期：${this.form.startDate} 至 ${this.form.endDate}`
+      return [dates, this.form.remark].filter(Boolean).join('\n')
     },
     async submit() {
       if (!this.validate() || this.submitting) return
       this.submitting = true
       try {
-        const res = await createDemand(this.form)
-        uni.showToast({ title: '提交成功', icon: 'success' })
+        await ensureLogin()
+        const res = await createDemand({
+          title: this.form.title,
+          categoryId: this.form.categoryId,
+          maternityPeriod: this.form.maternityPeriod,
+          contactName: this.form.contactName,
+          contactPhone: this.form.contactPhone,
+          gender: this.form.gender,
+          liveIn: this.form.liveIn,
+          expectedSalary: this.form.expectedSalary,
+          city: this.form.city,
+          district: this.form.district,
+          address: this.form.address,
+          remark: this.buildRemark(),
+        })
+        uni.showToast({ title: '发布成功', icon: 'success' })
         setTimeout(() => {
-          uni.redirectTo({ url: `/pages/demand/detail?id=${res.data}` })
+          uni.navigateTo({ url: `/pages/demand/detail?id=${res.data}` })
         }, 500)
       } finally {
         this.submitting = false
@@ -125,65 +291,310 @@ export default {
 <style>
 .page {
   min-height: 100vh;
-  padding: 24rpx;
-  background: #f4f5f2;
+  padding: 0 24rpx 156rpx;
+  background: #f7f7f6;
 }
 
-.form {
-  padding: 28rpx;
-  border: 1px solid rgba(31, 37, 43, 0.05);
-  border-radius: 26rpx;
+.hero {
+  position: relative;
+  height: 320rpx;
+  margin: 0 -24rpx 24rpx;
+  overflow: hidden;
+  background: linear-gradient(105deg, #ffe6df 0%, #fff0e9 58%, #fff7ef 100%);
+}
+
+.hero::before {
+  position: absolute;
+  top: -100rpx;
+  left: 160rpx;
+  width: 260rpx;
+  height: 420rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  content: '';
+  transform: rotate(-18deg);
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  padding: 72rpx 0 0 54rpx;
+}
+
+.hero-question {
+  display: block;
+  color: #ff6b4a;
+  font-size: 38rpx;
+  font-weight: 900;
+}
+
+.hero-title {
+  display: block;
+  margin-top: 12rpx;
+  color: #1f252b;
+  font-size: 62rpx;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 220rpx;
+  height: 72rpx;
+  margin-top: 18rpx;
+  padding: 0 28rpx;
+  border-radius: 18rpx;
   background: #fff;
-  box-shadow: 0 12rpx 30rpx rgba(32, 38, 44, 0.05);
+  color: #ff6b4a;
+  font-size: 30rpx;
+  font-weight: 800;
+  box-shadow: 0 12rpx 22rpx rgba(255, 104, 74, 0.12);
 }
 
-.field {
-  padding: 20rpx 0;
-  border-bottom: 1px solid #edf0f3;
+.hero-art {
+  position: absolute;
+  right: 24rpx;
+  bottom: 0;
+  width: 280rpx;
+  height: 280rpx;
 }
 
-.field:last-child {
+.nanny-head,
+.baby-head,
+.nanny-body,
+.baby-body {
+  position: absolute;
+}
+
+.nanny-head {
+  top: 18rpx;
+  right: 58rpx;
+  width: 78rpx;
+  height: 78rpx;
+  border-radius: 50%;
+  background: #ffd1bc;
+  box-shadow: inset 0 12rpx 0 #9e4a30;
+}
+
+.nanny-body {
+  right: 24rpx;
+  bottom: 22rpx;
+  width: 138rpx;
+  height: 178rpx;
+  border-radius: 70rpx 70rpx 26rpx 26rpx;
+  background: linear-gradient(180deg, #4b8bc3, #2f6ea9);
+}
+
+.baby-head {
+  left: 36rpx;
+  bottom: 94rpx;
+  width: 62rpx;
+  height: 62rpx;
+  border-radius: 50%;
+  background: #ffd5bd;
+}
+
+.baby-body {
+  left: 22rpx;
+  bottom: 34rpx;
+  width: 132rpx;
+  height: 72rpx;
+  border-radius: 36rpx;
+  background: #ffe6a8;
+  box-shadow: inset 0 -10rpx 0 #f7c873;
+}
+
+.card {
+  margin-top: 22rpx;
+  padding: 0 30rpx;
+  border-radius: 18rpx;
+  background: #fff;
+  box-shadow: 0 10rpx 26rpx rgba(32, 38, 44, 0.05);
+}
+
+.title-card {
+  margin-top: -10rpx;
+}
+
+.line-field {
+  display: flex;
+  min-height: 96rpx;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  border-bottom: 1rpx solid #ecefed;
+}
+
+.line-field:last-child {
   border-bottom: 0;
 }
 
-.label {
-  display: block;
-  margin-bottom: 14rpx;
-  color: #20242c;
-  font-size: 28rpx;
+.field-label,
+.block-label {
+  color: #1f252b;
+  font-size: 29rpx;
   font-weight: 600;
 }
 
-input,
-textarea,
-.picker {
-  width: 100%;
-  min-height: 70rpx;
-  padding: 0 20rpx;
-  border-radius: 18rpx;
-  background: #f7f8f5;
-  color: #3b414c;
+.required::before {
+  color: #ff4f5e;
+  content: '*';
+}
+
+.line-input {
+  flex: 1;
+  height: 92rpx;
+  color: #1f252b;
+  font-size: 29rpx;
+  text-align: right;
+}
+
+.placeholder,
+.muted {
+  color: #9aa1aa;
+}
+
+.picker-value {
+  flex: 1;
+  color: #1f252b;
+  font-size: 29rpx;
+  text-align: right;
+}
+
+.service-card {
+  padding-top: 28rpx;
+  padding-bottom: 24rpx;
+}
+
+.block-label {
+  display: block;
+  margin-bottom: 20rpx;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18rpx;
+}
+
+.service-option {
+  height: 70rpx;
+  line-height: 70rpx;
+  border: 1rpx solid #cfd3d7;
+  border-radius: 8rpx;
+  color: #68717a;
+  font-size: 28rpx;
+  text-align: center;
+  background: #fff;
+}
+
+.service-option.active {
+  border-color: #ff4f5e;
+  color: #ff4f5e;
+  background: #fffafa;
+}
+
+.period-panel {
+  margin-top: 28rpx;
+  padding-top: 24rpx;
+  border-top: 1rpx dashed #d9dde2;
+}
+
+.period-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18rpx 28rpx;
+}
+
+.period-option {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  color: #4a5360;
+  font-size: 25rpx;
+}
+
+.date-block {
+  padding: 24rpx 0 28rpx;
+}
+
+.date-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 20rpx;
+}
+
+.date-picker {
+  flex: 1;
+}
+
+.date-box {
+  display: flex;
+  height: 68rpx;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  border: 1rpx solid #cfd3d7;
+  border-radius: 8rpx;
+  color: #1f252b;
+  font-size: 27rpx;
+  background: #fff;
+}
+
+.date-icon {
+  color: #c8cdd2;
   font-size: 28rpx;
 }
 
-textarea {
-  height: 160rpx;
+.date-separator {
+  color: #8a8f99;
+  font-size: 28rpx;
 }
 
-.picker {
+.remark-card {
+  padding-top: 26rpx;
+  padding-bottom: 26rpx;
+}
+
+.remark-title {
   display: flex;
   align-items: center;
-  color: #6d7480;
+  gap: 10rpx;
+  color: #1f252b;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.edit-mark {
+  color: #68717a;
+  font-size: 26rpx;
+}
+
+.remark-textarea {
+  width: 100%;
+  height: 128rpx;
+  margin-top: 20rpx;
+  color: #1f252b;
+  font-size: 28rpx;
+  line-height: 1.5;
 }
 
 .submit {
-  margin-top: 28rpx;
-  height: 88rpx;
-  line-height: 88rpx;
-  border-radius: 22rpx;
-  background: #e84d64;
+  position: fixed;
+  left: 62rpx;
+  right: 62rpx;
+  bottom: 104rpx;
+  z-index: 10;
+  height: 78rpx;
+  line-height: 78rpx;
+  border-radius: 999rpx;
+  background: #ff4f5e;
   color: #fff;
-  font-size: 30rpx;
-  box-shadow: 0 12rpx 26rpx rgba(232, 77, 100, 0.18);
+  font-size: 31rpx;
+  font-weight: 800;
+  box-shadow: 0 14rpx 30rpx rgba(255, 79, 94, 0.28);
 }
 </style>

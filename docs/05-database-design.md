@@ -231,7 +231,23 @@
 - COMPLETED：已完成。
 - CANCELED：已取消。
 
-### 2.14 团购商品表 `group_product`
+### 2.14 服务订单评价表 `service_order_review`
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| id | bigint | 主键 |
+| service_order_id | bigint | 服务订单 ID |
+| user_id | bigint | 用户 ID |
+| staff_id | bigint | 服务人员 ID |
+| rating | int | 评分，1-5 |
+| content | varchar(512) | 评价内容 |
+
+约束：
+
+- 同一服务订单只能有一条有效评价。
+- 只有服务订单状态为 `COMPLETED` 时允许创建评价。
+
+### 2.15 团购商品表 `group_product`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -249,7 +265,7 @@
 | description | text | 产品介绍 |
 | status | varchar(32) | DRAFT, ONLINE, OFFLINE |
 
-### 2.15 拼团表 `group_team`
+### 2.16 拼团表 `group_team`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -268,7 +284,7 @@
 - FAILED：拼团失败。
 - CANCELED：已取消。
 
-### 2.16 团购订单表 `group_order`
+### 2.17 团购订单表 `group_order`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -292,7 +308,23 @@
 - EXPIRED：到期。
 - AFTER_SALE：售后。
 
-### 2.17 内容配置表 `content_config`
+### 2.18 团购订单评价表 `group_order_review`
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| id | bigint | 主键 |
+| group_order_id | bigint | 团购订单 ID |
+| user_id | bigint | 用户 ID |
+| product_id | bigint | 团购商品 ID |
+| rating | int | 评分，1-5 |
+| content | varchar(512) | 评价内容 |
+
+约束：
+
+- 同一团购订单只能有一条有效评价。
+- 只有团购订单状态为 `USED` 时允许创建评价。
+
+### 2.19 内容配置表 `content_config`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -304,7 +336,7 @@
 | sort_no | int | 排序 |
 | enabled | tinyint | 是否启用 |
 
-### 2.18 文件表 `file_asset`
+### 2.20 文件表 `file_asset`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -316,7 +348,7 @@
 | size_bytes | bigint | 文件大小 |
 | usage_type | varchar(64) | AVATAR, CERTIFICATE, CONTRACT, PRODUCT, BANNER |
 
-### 2.19 系统消息表 `system_message`
+### 2.21 系统消息表 `system_message`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -338,5 +370,9 @@
 - `interview_appointment.user_id` 普通索引。
 - `contract.user_id` 普通索引。
 - `service_order.user_id` 普通索引。
+- `service_order_review.service_order_id` 唯一索引。
+- `service_order_review.staff_id` 普通索引。
 - `group_order.user_id` 普通索引。
+- `group_order_review.group_order_id` 唯一索引。
+- `group_order_review.product_id` 普通索引。
 - `group_team.product_id` 普通索引。

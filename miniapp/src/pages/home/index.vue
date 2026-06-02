@@ -50,7 +50,7 @@
       <view v-if="visibleGroupProducts.length === 0" class="empty white-empty">暂无团购活动</view>
       <view v-for="item in visibleGroupProducts" :key="item.id" class="group-card" @tap="openGroupDetail(item.id)">
         <view class="group-cover">
-          <image v-if="item.coverUrl" :src="item.coverUrl" mode="aspectFill" />
+          <image v-if="validCover(item.coverUrl)" :src="item.coverUrl" mode="aspectFill" />
           <text v-else>{{ shortTitle(item.title) }}</text>
         </view>
         <view class="group-info">
@@ -78,10 +78,6 @@
     </scroll-view>
 
     <view class="section staff-section">
-      <view class="section-head">
-        <text class="section-title">{{ activeCategoryName || '推荐阿姨' }}</text>
-        <text class="section-sub">向下滑动查看更多</text>
-      </view>
       <view v-if="staffList.length === 0 && !staffLoading" class="empty">当前分类暂无服务人员</view>
       <view v-for="item in staffList" :key="item.id" class="staff-card" @tap="openStaffDetail(item.id)">
         <view class="avatar">
@@ -93,10 +89,15 @@
             <text class="staff-name">{{ item.name }}</text>
             <text class="staff-price">{{ salaryText(item) }}</text>
           </view>
-          <view class="tag-row">
-            <text v-if="item.city || item.district" class="tag">{{ regionText(item) }}</text>
-            <text v-if="item.age" class="tag">{{ item.age }}岁</text>
-            <text v-if="item.experienceYears" class="tag">{{ item.experienceYears }}年经验</text>
+          <text v-if="item.city || item.district" class="staff-location">{{ regionText(item) }}</text>
+          <view class="meta-line">
+            <text v-if="item.age">{{ item.age }}岁</text>
+            <text v-if="item.experienceYears">{{ item.experienceYears }}年经验</text>
+            <text v-if="item.categoryName">{{ item.categoryName }}</text>
+            <text v-if="item.education">{{ item.education }}</text>
+          </view>
+          <view v-if="staffTags(item).length" class="staff-tag-row">
+            <text v-for="tag in staffTags(item)" :key="tag" class="tag">{{ tag }}</text>
           </view>
           <text class="staff-desc">{{ item.serviceDesc || item.introduction || item.summary || '经验稳定，服务认真，可预约面试。' }}</text>
         </view>
@@ -166,6 +167,11 @@ export default {
       this.groupProducts = res.data.groupProducts || []
       if (this.staffCategories.length) {
         this.selectCategory(this.staffCategories[0])
+      } else {
+        this.activeCategoryName = '推荐阿姨'
+        this.staffList = res.data.recommendedStaff || []
+        this.staffTotal = this.staffList.length
+        this.staffNoMore = true
       }
     },
     openCategory(item) {
@@ -222,6 +228,10 @@ export default {
     shortTitle(value) {
       return (value || '团购').slice(0, 2)
     },
+    validCover(value) {
+      const url = String(value || '')
+      return !!url && !url.includes('/static/logo.png')
+    },
     money(value) {
       return Number(value || 0).toFixed(2).replace(/\.00$/, '')
     },
@@ -255,6 +265,16 @@ export default {
     regionText(item) {
       return [item.city, item.district].filter(Boolean).join(' ')
     },
+    staffTags(item) {
+      const tags = item.tags || item.tagList || item.tagNames || []
+      if (Array.isArray(tags)) {
+        return tags.map((tag) => tag.tagName || tag.name || tag).filter(Boolean).slice(0, 3)
+      }
+      return String(tags || '')
+        .split(/[,，\s]+/)
+        .filter(Boolean)
+        .slice(0, 3)
+    },
   },
 }
 </script>
@@ -263,22 +283,22 @@ export default {
 .page {
   min-height: 100vh;
   padding: 24rpx 24rpx 42rpx;
-  background: #f5f6f3;
+  background: linear-gradient(180deg, #fff1ed 0, #fff8f4 330rpx, #f7f4ef 760rpx);
 }
 
 .banner {
   height: 320rpx;
-  border-radius: 18rpx;
+  border-radius: 16rpx;
   overflow: hidden;
-  background: #ff584d;
-  box-shadow: 0 12rpx 26rpx rgba(239, 63, 95, 0.16);
+  background: #ef4f5f;
+  box-shadow: 0 16rpx 34rpx rgba(176, 70, 78, 0.16);
 }
 
 .banner-item {
   position: relative;
   height: 320rpx;
   overflow: hidden;
-  border-radius: 18rpx;
+  border-radius: 16rpx;
 }
 
 .banner-image,
@@ -294,7 +314,7 @@ export default {
   height: 320rpx;
   align-items: center;
   padding-left: 46rpx;
-  background: linear-gradient(135deg, #ff4b4b 0%, #ff8759 58%, #ffd3a6 100%);
+  background: linear-gradient(135deg, #ef4f5f 0%, #ff8f78 58%, #ffe1c7 100%);
 }
 
 .banner-fallback-title {
@@ -344,9 +364,10 @@ export default {
   gap: 18rpx;
   margin-top: 22rpx;
   padding: 0 24rpx;
-  border-radius: 14rpx;
-  background: #fff;
-  box-shadow: 0 10rpx 24rpx rgba(32, 38, 44, 0.05);
+  border: 1rpx solid #ffe3dd;
+  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12rpx 26rpx rgba(80, 45, 40, 0.06);
 }
 
 .ticker-icon {
@@ -357,7 +378,7 @@ export default {
   justify-content: center;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: #ef3f5f;
+  background: #ef4f5f;
   color: #fff;
   font-size: 25rpx;
   font-weight: 900;
@@ -371,7 +392,7 @@ export default {
 .ticker-text {
   height: 78rpx;
   line-height: 78rpx;
-  color: #333942;
+  color: #4a3432;
   font-size: 27rpx;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -381,9 +402,10 @@ export default {
 .section {
   margin-top: 22rpx;
   padding: 24rpx;
-  border-radius: 18rpx;
+  border: 1rpx solid #f3e5dc;
+  border-radius: 16rpx;
   background: #fff;
-  box-shadow: 0 10rpx 24rpx rgba(32, 38, 44, 0.05);
+  box-shadow: 0 12rpx 28rpx rgba(80, 45, 40, 0.05);
 }
 
 .section-head {
@@ -394,7 +416,7 @@ export default {
 }
 
 .section-title {
-  color: #20242c;
+  color: #222832;
   font-size: 34rpx;
   font-weight: 900;
 }
@@ -420,7 +442,7 @@ export default {
   align-items: center;
   flex-direction: column;
   gap: 10rpx;
-  color: #20242c;
+  color: #222832;
 }
 
 .category-icon {
@@ -429,28 +451,28 @@ export default {
   height: 86rpx;
   align-items: center;
   justify-content: center;
-  border-radius: 26rpx;
-  background: #fff1f3;
-  color: #ef3f5f;
+  border-radius: 16rpx;
+  background: #fff1ee;
+  color: #ef4f5f;
   font-size: 32rpx;
   font-weight: 900;
   overflow: hidden;
 }
 
 .category:nth-child(2n) .category-icon {
-  background: #eef9ec;
+  background: #f0f7ee;
 }
 
 .category:nth-child(3n) .category-icon {
-  background: #eef5ff;
+  background: #fff7dc;
 }
 
 .category:nth-child(4n) .category-icon {
-  background: #fff7e7;
+  background: #eef7f5;
 }
 
 .category.active .category-icon {
-  box-shadow: 0 0 0 4rpx rgba(239, 63, 95, 0.14);
+  box-shadow: 0 0 0 4rpx rgba(239, 79, 95, 0.14);
 }
 
 .category-name {
@@ -472,9 +494,10 @@ export default {
 .group-card {
   margin-top: 18rpx;
   overflow: hidden;
+  border: 1rpx solid #f3e5dc;
   border-radius: 16rpx;
   background: #fff;
-  box-shadow: 0 10rpx 24rpx rgba(32, 38, 44, 0.05);
+  box-shadow: 0 12rpx 26rpx rgba(80, 45, 40, 0.05);
 }
 
 .group-card:first-of-type {
@@ -488,7 +511,7 @@ export default {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(135deg, #ff802f, #ffd175);
+  background: linear-gradient(135deg, #ef4f5f, #f6a05f);
   color: #fff;
   font-size: 46rpx;
   font-weight: 900;
@@ -499,7 +522,7 @@ export default {
 }
 
 .group-title {
-  color: #20242c;
+  color: #222832;
   font-size: 30rpx;
   font-weight: 800;
   line-height: 1.35;
@@ -524,7 +547,7 @@ export default {
 }
 
 .price {
-  color: #ef3f5f;
+  color: #ef4f5f;
   font-size: 34rpx;
   font-weight: 900;
 }
@@ -535,28 +558,33 @@ export default {
 }
 
 .staff-tabs {
-  margin: 30rpx -24rpx 0;
+  margin: 30rpx 0 0;
+  border: 1rpx solid #f3e5dc;
+  border-bottom: 0;
+  border-radius: 16rpx 16rpx 0 0;
+  background: #fff;
   white-space: nowrap;
 }
 
 .staff-tabs-inner {
   display: flex;
-  gap: 38rpx;
-  padding: 0 24rpx 18rpx;
+  gap: 34rpx;
+  padding: 0 22rpx 14rpx;
 }
 
 .staff-tab {
   position: relative;
   display: inline-flex;
   align-items: center;
-  height: 58rpx;
-  color: #5e6570;
-  font-size: 31rpx;
+  height: 62rpx;
+  min-width: 76rpx;
+  color: #6c5f5b;
+  font-size: 30rpx;
   font-weight: 500;
 }
 
 .staff-tab.active {
-  color: #20242c;
+  color: #222832;
   font-size: 36rpx;
   font-weight: 900;
 }
@@ -568,14 +596,16 @@ export default {
   width: 26rpx;
   height: 8rpx;
   border-radius: 999rpx;
-  background: #ef3f5f;
+  background: #ef4f5f;
   content: '';
   transform: translateX(-50%);
 }
 
 .staff-section {
   margin-top: 0;
-  padding-bottom: 28rpx;
+  padding: 18rpx 18rpx 28rpx;
+  border-top: 0;
+  border-radius: 0 0 16rpx 16rpx;
 }
 
 .staff-card {
@@ -583,8 +613,13 @@ export default {
   gap: 20rpx;
   margin-top: 18rpx;
   padding: 20rpx;
-  border-radius: 18rpx;
-  background: #fafbf9;
+  border: 1rpx solid #f3e5dc;
+  border-radius: 16rpx;
+  background: #fff;
+}
+
+.staff-card:first-of-type {
+  margin-top: 0;
 }
 
 .avatar {
@@ -595,9 +630,9 @@ export default {
   justify-content: center;
   flex: 0 0 auto;
   overflow: hidden;
-  border-radius: 18rpx;
-  background: #f9c6d2;
-  color: #ef3f5f;
+  border-radius: 8rpx;
+  background: #fff1ee;
+  color: #ef4f5f;
   font-size: 42rpx;
   font-weight: 900;
 }
@@ -617,7 +652,7 @@ export default {
 .staff-name {
   flex: 1;
   min-width: 0;
-  color: #20242c;
+  color: #222832;
   font-size: 31rpx;
   font-weight: 900;
   line-height: 1.25;
@@ -625,31 +660,67 @@ export default {
 
 .staff-price {
   flex: 0 0 auto;
-  color: #ef3f5f;
-  font-size: 24rpx;
-  font-weight: 800;
+  color: #ef4f5f;
+  font-size: 26rpx;
+  font-weight: 900;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
-.tag-row {
+.staff-location {
+  display: block;
+  margin-top: 9rpx;
+  color: #2f343b;
+  font-size: 26rpx;
+  line-height: 1.35;
+}
+
+.meta-line {
   display: flex;
   flex-wrap: wrap;
-  gap: 8rpx;
+  margin-top: 9rpx;
+  color: #6f7680;
+  font-size: 24rpx;
+}
+
+.meta-line text {
+  padding-right: 16rpx;
+  margin-right: 16rpx;
+  border-right: 1rpx solid #d8dde2;
+  line-height: 1.25;
+}
+
+.meta-line text:last-child {
+  border-right: 0;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.staff-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
   margin-top: 10rpx;
 }
 
 .tag {
-  padding: 4rpx 12rpx;
-  border-radius: 999rpx;
-  background: #eef0f1;
-  color: #727b86;
-  font-size: 21rpx;
+  max-width: 156rpx;
+  padding: 6rpx 14rpx;
+  overflow: hidden;
+  border-radius: 8rpx;
+  background: #fff1ee;
+  color: #ef4f5f;
+  font-size: 22rpx;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .staff-desc {
-  margin-top: 10rpx;
+  margin-top: 9rpx;
   color: #68717a;
   font-size: 24rpx;
-  line-height: 1.45;
+  line-height: 1.42;
 }
 
 .empty,
@@ -667,10 +738,10 @@ export default {
   width: 172rpx;
   height: 64rpx;
   line-height: 64rpx;
-  border-radius: 18rpx;
-  background: #20242c;
+  border-radius: 16rpx;
+  background: #ef4f5f;
   color: #fff;
   font-size: 24rpx;
-  box-shadow: 0 12rpx 26rpx rgba(32, 37, 43, 0.18);
+  box-shadow: 0 14rpx 30rpx rgba(239, 79, 95, 0.22);
 }
 </style>

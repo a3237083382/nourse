@@ -38,8 +38,17 @@
       <view v-if="selectedCategoryName === '月嫂'" class="period-panel">
         <checkbox-group class="period-group" @change="onMaternityChange">
           <label v-for="item in maternityPeriods" :key="item.value" class="period-option">
-            <checkbox :value="item.value" :checked="form.maternityPeriod === item.value" color="#ff4f5e" />
+            <checkbox :value="item.value" :checked="form.maternityPeriod === item.value" color="#ef4f5f" />
             <text>{{ item.label }}</text>
+          </label>
+        </checkbox-group>
+      </view>
+
+      <view v-else-if="serviceOptions.length" class="period-panel">
+        <checkbox-group class="period-group" @change="onServiceOptionChange">
+          <label v-for="item in serviceOptions" :key="item" class="period-option">
+            <checkbox :value="item" :checked="form.serviceOptions.includes(item)" color="#ef4f5f" />
+            <text>{{ item }}</text>
           </label>
         </checkbox-group>
       </view>
@@ -128,6 +137,11 @@ const regionOptions = [
   { label: '杭州 滨江区', city: '杭州', district: '滨江区' },
   { label: '长沙 岳麓区', city: '长沙', district: '岳麓区' },
 ]
+const careOptions = ['做饭做家务', '照顾小孩（3岁以下）', '照顾小孩（3岁以上）', '照顾能自理老人', '照顾半自理老人', '照顾不能自理老人']
+const serviceOptionsMap = {
+  保姆: careOptions,
+  钟点工: careOptions,
+}
 
 export default {
   data() {
@@ -151,6 +165,7 @@ export default {
         title: '',
         categoryId: undefined,
         maternityPeriod: '',
+        serviceOptions: [],
         contactName: '',
         contactPhone: '',
         gender: '',
@@ -173,6 +188,9 @@ export default {
     },
     regionText() {
       return [this.form.city, this.form.district].filter(Boolean).join(' ')
+    },
+    serviceOptions() {
+      return serviceOptionsMap[this.selectedCategoryName] || []
     },
   },
   onLoad(options = {}) {
@@ -204,10 +222,14 @@ export default {
       if (item.name !== '月嫂') {
         this.form.maternityPeriod = ''
       }
+      this.form.serviceOptions = []
     },
     onMaternityChange(event) {
       const checked = event.detail.value || []
       this.form.maternityPeriod = checked[checked.length - 1] || ''
+    },
+    onServiceOptionChange(event) {
+      this.form.serviceOptions = event.detail.value || []
     },
     onGenderChange(event) {
       this.form.gender = this.genderOptions[event.detail.value]
@@ -255,7 +277,8 @@ export default {
     },
     buildRemark() {
       const dates = `工作日期：${this.form.startDate} 至 ${this.form.endDate}`
-      return [dates, this.form.remark].filter(Boolean).join('\n')
+      const options = this.form.serviceOptions.length ? `服务选择：${this.form.serviceOptions.join('、')}` : ''
+      return [dates, options, this.form.remark].filter(Boolean).join('\n')
     },
     async submit() {
       if (!this.validate() || this.submitting) return
@@ -292,7 +315,7 @@ export default {
 .page {
   min-height: 100vh;
   padding: 0 24rpx 156rpx;
-  background: #f7f7f6;
+  background: linear-gradient(180deg, #fff1ed 0, #fff8f4 330rpx, #f7f4ef 760rpx);
 }
 
 .hero {
@@ -300,7 +323,7 @@ export default {
   height: 320rpx;
   margin: 0 -24rpx 24rpx;
   overflow: hidden;
-  background: linear-gradient(105deg, #ffe6df 0%, #fff0e9 58%, #fff7ef 100%);
+  background: linear-gradient(105deg, #fff1ee 0%, #fff8f4 58%, #fff7dc 100%);
 }
 
 .hero::before {
@@ -323,7 +346,7 @@ export default {
 
 .hero-question {
   display: block;
-  color: #ff6b4a;
+  color: #ef4f5f;
   font-size: 38rpx;
   font-weight: 900;
 }
@@ -331,7 +354,7 @@ export default {
 .hero-title {
   display: block;
   margin-top: 12rpx;
-  color: #1f252b;
+  color: #222832;
   font-size: 62rpx;
   font-weight: 900;
   letter-spacing: 0;
@@ -345,12 +368,12 @@ export default {
   height: 72rpx;
   margin-top: 18rpx;
   padding: 0 28rpx;
-  border-radius: 18rpx;
+  border-radius: 16rpx;
   background: #fff;
-  color: #ff6b4a;
+  color: #ef4f5f;
   font-size: 30rpx;
   font-weight: 800;
-  box-shadow: 0 12rpx 22rpx rgba(255, 104, 74, 0.12);
+  box-shadow: 0 12rpx 24rpx rgba(239, 79, 95, 0.12);
 }
 
 .hero-art {
@@ -384,7 +407,7 @@ export default {
   width: 138rpx;
   height: 178rpx;
   border-radius: 70rpx 70rpx 26rpx 26rpx;
-  background: linear-gradient(180deg, #4b8bc3, #2f6ea9);
+  background: linear-gradient(180deg, #ef8f78, #ef4f5f);
 }
 
 .baby-head {
@@ -402,16 +425,17 @@ export default {
   width: 132rpx;
   height: 72rpx;
   border-radius: 36rpx;
-  background: #ffe6a8;
-  box-shadow: inset 0 -10rpx 0 #f7c873;
+  background: #ffe6c2;
+  box-shadow: inset 0 -10rpx 0 #f2c987;
 }
 
 .card {
   margin-top: 22rpx;
   padding: 0 30rpx;
-  border-radius: 18rpx;
+  border: 1rpx solid #f3e5dc;
+  border-radius: 16rpx;
   background: #fff;
-  box-shadow: 0 10rpx 26rpx rgba(32, 38, 44, 0.05);
+  box-shadow: 0 12rpx 28rpx rgba(80, 45, 40, 0.05);
 }
 
 .title-card {
@@ -433,13 +457,13 @@ export default {
 
 .field-label,
 .block-label {
-  color: #1f252b;
+  color: #222832;
   font-size: 29rpx;
   font-weight: 600;
 }
 
 .required::before {
-  color: #ff4f5e;
+  color: #ef4f5f;
   content: '*';
 }
 
@@ -482,18 +506,18 @@ export default {
 .service-option {
   height: 70rpx;
   line-height: 70rpx;
-  border: 1rpx solid #cfd3d7;
-  border-radius: 8rpx;
-  color: #68717a;
+  border: 1rpx solid #eadbd2;
+  border-radius: 12rpx;
+  color: #6c5f5b;
   font-size: 28rpx;
   text-align: center;
   background: #fff;
 }
 
 .service-option.active {
-  border-color: #ff4f5e;
-  color: #ff4f5e;
-  background: #fffafa;
+  border-color: #ef4f5f;
+  color: #ef4f5f;
+  background: #fff1ee;
 }
 
 .period-panel {
@@ -537,9 +561,9 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 12rpx;
-  border: 1rpx solid #cfd3d7;
-  border-radius: 8rpx;
-  color: #1f252b;
+  border: 1rpx solid #eadbd2;
+  border-radius: 12rpx;
+  color: #222832;
   font-size: 27rpx;
   background: #fff;
 }
@@ -591,10 +615,10 @@ export default {
   height: 78rpx;
   line-height: 78rpx;
   border-radius: 999rpx;
-  background: #ff4f5e;
+  background: #ef4f5f;
   color: #fff;
   font-size: 31rpx;
   font-weight: 800;
-  box-shadow: 0 14rpx 30rpx rgba(255, 79, 94, 0.28);
+  box-shadow: 0 14rpx 30rpx rgba(239, 79, 95, 0.24);
 }
 </style>

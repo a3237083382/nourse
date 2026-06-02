@@ -115,21 +115,21 @@ export default {
 .page {
   min-height: 100vh;
   padding: 24rpx;
-  background: #f4f5f2;
+  background: #f7f4ef;
 }
 
 .panel {
   margin-bottom: 24rpx;
   padding: 30rpx;
   border: 1px solid rgba(31, 37, 43, 0.05);
-  border-radius: 24rpx;
+  border-radius: 16rpx;
   background: #fff;
   box-shadow: 0 12rpx 30rpx rgba(32, 38, 44, 0.05);
 }
 
 .title {
   display: block;
-  color: #20242c;
+  color: #222832;
   font-size: 34rpx;
   font-weight: 700;
 }
@@ -151,7 +151,7 @@ export default {
 .label {
   display: block;
   margin-bottom: 12rpx;
-  color: #20242c;
+  color: #222832;
   font-size: 28rpx;
 }
 
@@ -191,7 +191,7 @@ textarea {
 }
 
 .segmented .active {
-  background: #20252b;
+  background: #4c3b37;
   color: #fff;
 }
 
@@ -199,7 +199,7 @@ textarea {
   height: 88rpx;
   line-height: 88rpx;
   border-radius: 22rpx;
-  background: #e84d64;
+  background: #ef4f5f;
   color: #fff;
   font-size: 30rpx;
   box-shadow: 0 12rpx 26rpx rgba(232, 77, 100, 0.18);

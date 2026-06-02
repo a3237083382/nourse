@@ -15,8 +15,8 @@ export default {
 <style>
 page {
   min-height: 100%;
-  background: #f4f5f2;
-  color: #1f252b;
+  background: #fff7f2;
+  color: #222832;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
@@ -33,14 +33,24 @@ button {
   padding: 0;
   border: 0;
   font-weight: 600;
+  transition: opacity 0.18s ease;
 }
 
 button::after {
   border: 0;
 }
 
+button[disabled],
+button:active {
+  opacity: 0.78;
+}
+
 input,
 textarea {
   min-width: 0;
+}
+
+.page {
+  background: #fff7f2;
 }
 </style>

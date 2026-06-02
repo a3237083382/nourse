@@ -38,6 +38,8 @@ public class AdminStaffController {
             select s.id, s.category_id categoryId, c.name categoryName, s.name, s.avatar_url avatarUrl,
                    s.gender, s.age, s.city, s.district, s.education, s.experience_years experienceYears,
                    s.salary_min salaryMin, s.salary_max salaryMax, s.salary_unit salaryUnit,
+                   s.native_place nativePlace, s.height_cm heightCm, s.weight_kg weightKg,
+                   s.birth_date birthDate, s.marital_status maritalStatus,
                    s.status, s.recommended, s.sort_no sortNo, s.created_at createdAt, s.updated_at updatedAt
             from service_staff s
             left join service_category c on c.id = s.category_id
@@ -53,7 +55,13 @@ public class AdminStaffController {
     @GetMapping("/{id}")
     public R<Map<String, Object>> detail(@PathVariable Long id) {
         Map<String, Object> staff = jdbcTemplate.queryForMap("""
-            select s.*, c.name categoryName
+            select s.id, s.category_id categoryId, c.name categoryName, s.name, s.avatar_url avatarUrl,
+                   s.gender, s.age, s.city, s.district, s.education, s.experience_years experienceYears,
+                   s.salary_min salaryMin, s.salary_max salaryMax, s.salary_unit salaryUnit,
+                   s.service_desc serviceDesc, s.native_place nativePlace, s.height_cm heightCm,
+                   s.weight_kg weightKg, s.birth_date birthDate, s.marital_status maritalStatus,
+                   s.self_intro selfIntro, s.skills, s.verification_note verificationNote,
+                   s.status, s.recommended, s.sort_no sortNo, s.created_at createdAt, s.updated_at updatedAt
             from service_staff s
             left join service_category c on c.id = s.category_id
             where s.id = ? and s.deleted = 0
@@ -69,13 +77,16 @@ public class AdminStaffController {
     public R<Long> create(@RequestBody StaffRequest request) {
         jdbcTemplate.update("""
             insert into service_staff(category_id, name, avatar_url, gender, age, city, district, education,
-                experience_years, salary_min, salary_max, salary_unit, service_desc, status, recommended, sort_no,
+                experience_years, salary_min, salary_max, salary_unit, service_desc, native_place, height_cm,
+                weight_kg, birth_date, marital_status, self_intro, skills, verification_note,
+                status, recommended, sort_no,
                 created_at, updated_at, deleted)
-            values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now(), 0)
+            values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now(), 0)
             """, request.categoryId(), request.name(), request.avatarUrl(), request.gender(), request.age(),
             request.city(), request.district(), request.education(), request.experienceYears(), request.salaryMin(),
-            request.salaryMax(), request.salaryUnit(), request.serviceDesc(), request.statusValue(),
-            request.recommendedValue(), request.sortNoValue());
+            request.salaryMax(), request.salaryUnit(), request.serviceDesc(), request.nativePlace(), request.heightCm(),
+            request.weightKg(), request.birthDate(), request.maritalStatus(), request.selfIntro(), request.skills(),
+            request.verificationNote(), request.statusValue(), request.recommendedValue(), request.sortNoValue());
         Long id = jdbcTemplate.queryForObject("select last_insert_id()", Long.class);
         replaceTags(id, request.tags());
         replaceCertificates(id, request.certificates());
@@ -90,12 +101,15 @@ public class AdminStaffController {
             update service_staff
             set category_id = ?, name = ?, avatar_url = ?, gender = ?, age = ?, city = ?, district = ?,
                 education = ?, experience_years = ?, salary_min = ?, salary_max = ?, salary_unit = ?,
-                service_desc = ?, status = ?, recommended = ?, sort_no = ?, updated_at = now()
+                service_desc = ?, native_place = ?, height_cm = ?, weight_kg = ?, birth_date = ?,
+                marital_status = ?, self_intro = ?, skills = ?, verification_note = ?,
+                status = ?, recommended = ?, sort_no = ?, updated_at = now()
             where id = ? and deleted = 0
             """, request.categoryId(), request.name(), request.avatarUrl(), request.gender(), request.age(),
             request.city(), request.district(), request.education(), request.experienceYears(), request.salaryMin(),
-            request.salaryMax(), request.salaryUnit(), request.serviceDesc(), request.statusValue(),
-            request.recommendedValue(), request.sortNoValue(), id);
+            request.salaryMax(), request.salaryUnit(), request.serviceDesc(), request.nativePlace(), request.heightCm(),
+            request.weightKg(), request.birthDate(), request.maritalStatus(), request.selfIntro(), request.skills(),
+            request.verificationNote(), request.statusValue(), request.recommendedValue(), request.sortNoValue(), id);
         replaceTags(id, request.tags());
         replaceCertificates(id, request.certificates());
         replacePhotos(id, request.photos());
@@ -251,6 +265,14 @@ public class AdminStaffController {
         BigDecimal salaryMax,
         String salaryUnit,
         String serviceDesc,
+        String nativePlace,
+        Integer heightCm,
+        Integer weightKg,
+        String birthDate,
+        String maritalStatus,
+        String selfIntro,
+        String skills,
+        String verificationNote,
         String status,
         Boolean recommended,
         Integer sortNo,

@@ -120,7 +120,7 @@ export default {
 .page {
   min-height: 100vh;
   padding: 0 28rpx 150rpx;
-  background: linear-gradient(180deg, #ffe0dc 0, #fff8f5 188rpx, #f6f7f8 430rpx);
+  background: linear-gradient(180deg, #fff1ed 0, #fff8f4 330rpx, #f7f4ef 760rpx);
 }
 
 .hero {
@@ -128,8 +128,8 @@ export default {
   padding: 58rpx 28rpx 42rpx;
   background:
     radial-gradient(circle at 15% 38%, rgba(255, 255, 255, 0.92) 0 88rpx, transparent 91rpx),
-    radial-gradient(circle at 80% 16%, rgba(255, 186, 160, 0.26) 0 116rpx, transparent 118rpx),
-    linear-gradient(135deg, #ffd2d1 0%, #fff9f5 58%, #ffffff 100%);
+    radial-gradient(circle at 80% 16%, rgba(239, 79, 95, 0.12) 0 116rpx, transparent 118rpx),
+    linear-gradient(135deg, #fff1ee 0%, #fff8f4 58%, #ffffff 100%);
 }
 
 .avatar-row {
@@ -146,8 +146,8 @@ export default {
   padding: 0;
   border: 8rpx solid #fff;
   border-radius: 50%;
-  background: #fff4f2;
-  box-shadow: 0 16rpx 36rpx rgba(244, 87, 96, 0.18);
+  background: #fff7f2;
+  box-shadow: 0 16rpx 36rpx rgba(239, 79, 95, 0.14);
 }
 
 .avatar-button::after {
@@ -180,7 +180,7 @@ export default {
   width: 58rpx;
   height: 58rpx;
   border-radius: 50%;
-  background: #ff8278;
+  background: #ef4f5f;
   content: '';
 }
 
@@ -204,7 +204,7 @@ export default {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #ff8a1f;
+  background: #d9893d;
   color: #fff;
   font-size: 27rpx;
   font-weight: 900;
@@ -217,7 +217,7 @@ export default {
 }
 
 .avatar-title {
-  color: #111820;
+  color: #222832;
   font-size: 42rpx;
   font-weight: 900;
 }
@@ -230,9 +230,10 @@ export default {
 .form-card {
   margin-top: 18rpx;
   padding: 22rpx 46rpx;
-  border-radius: 10rpx;
+  border: 1rpx solid #f3e5dc;
+  border-radius: 16rpx;
   background: #fff;
-  box-shadow: 0 14rpx 34rpx rgba(20, 28, 38, 0.04);
+  box-shadow: 0 12rpx 28rpx rgba(80, 45, 40, 0.05);
 }
 
 .form-row {
@@ -248,7 +249,7 @@ export default {
 
 .label {
   flex: 0 0 auto;
-  color: #111820;
+  color: #222832;
   font-size: 32rpx;
   font-weight: 900;
 }
@@ -257,7 +258,7 @@ export default {
   flex: 1;
   min-width: 0;
   height: 72rpx;
-  color: #151b24;
+  color: #222832;
   font-size: 32rpx;
   text-align: right;
 }
@@ -281,11 +282,11 @@ export default {
   height: 80rpx;
   line-height: 80rpx;
   border-radius: 999rpx;
-  background: #ff4f57;
+  background: #ef4f5f;
   color: #fff;
   font-size: 34rpx;
   font-weight: 900;
-  box-shadow: 0 14rpx 26rpx rgba(255, 79, 87, 0.22);
+  box-shadow: 0 14rpx 26rpx rgba(239, 79, 95, 0.22);
 }
 
 .confirm::after {

@@ -144,7 +144,7 @@ export default {
 .page {
   min-height: 100vh;
   padding: 24rpx;
-  background: #f4f5f2;
+  background: #f7f4ef;
 }
 
 .tabs {
@@ -165,7 +165,7 @@ export default {
 }
 
 .tab.active {
-  background: #20252b;
+  background: #4c3b37;
   color: #fff;
   font-weight: 700;
 }
@@ -176,7 +176,7 @@ export default {
   margin-bottom: 20rpx;
   padding: 28rpx;
   border: 1px solid rgba(31, 37, 43, 0.05);
-  border-radius: 24rpx;
+  border-radius: 16rpx;
   background: #fff;
   box-shadow: 0 12rpx 30rpx rgba(32, 38, 44, 0.05);
 }
@@ -195,7 +195,7 @@ export default {
 }
 
 .title {
-  color: #20242c;
+  color: #222832;
   font-size: 32rpx;
   font-weight: 700;
 }
@@ -218,7 +218,7 @@ export default {
 }
 
 .amount {
-  color: #e84d64;
+  color: #ef4f5f;
   font-size: 32rpx;
   font-weight: 800;
 }
@@ -238,7 +238,7 @@ export default {
 }
 
 .close {
-  color: #e84d64;
+  color: #ef4f5f;
   font-size: 26rpx;
 }
 
@@ -274,13 +274,13 @@ export default {
 }
 
 .flow-step.done {
-  color: #ef3f5f;
+  color: #ef4f5f;
   font-weight: 700;
 }
 
 .flow-step.done .flow-dot {
   background: #ffe9ee;
-  color: #ef3f5f;
+  color: #ef4f5f;
 }
 
 .review {
@@ -297,7 +297,7 @@ export default {
 }
 
 .review-title {
-  color: #20242c;
+  color: #222832;
   font-size: 28rpx;
   font-weight: 800;
 }
@@ -349,7 +349,7 @@ export default {
   line-height: 72rpx;
   margin-top: 18rpx;
   border-radius: 16rpx;
-  background: #ef3f5f;
+  background: #ef4f5f;
   color: #fff;
   font-size: 26rpx;
   font-weight: 700;

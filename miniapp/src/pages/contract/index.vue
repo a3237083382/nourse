@@ -181,7 +181,7 @@ export default {
 .page {
   min-height: 100vh;
   padding: 24rpx;
-  background: #f4f5f2;
+  background: #f7f4ef;
 }
 
 .tabs {
@@ -202,7 +202,7 @@ export default {
 }
 
 .tab.active {
-  background: #20252b;
+  background: #4c3b37;
   color: #fff;
   font-weight: 700;
 }
@@ -213,7 +213,7 @@ export default {
   margin-bottom: 20rpx;
   padding: 28rpx;
   border: 1px solid rgba(31, 37, 43, 0.05);
-  border-radius: 24rpx;
+  border-radius: 16rpx;
   background: #fff;
   box-shadow: 0 12rpx 30rpx rgba(32, 38, 44, 0.05);
 }
@@ -234,7 +234,7 @@ export default {
 .title {
   flex: 1;
   min-width: 0;
-  color: #20242c;
+  color: #222832;
   font-size: 32rpx;
   font-weight: 700;
   line-height: 1.35;
@@ -277,7 +277,7 @@ export default {
 }
 
 .close {
-  color: #e84d64;
+  color: #ef4f5f;
   font-size: 26rpx;
 }
 
@@ -313,7 +313,7 @@ export default {
 .file-title {
   display: block;
   overflow: hidden;
-  color: #20242c;
+  color: #222832;
   font-size: 28rpx;
   font-weight: 700;
   line-height: 1.4;
@@ -334,7 +334,7 @@ export default {
   height: 78rpx;
   line-height: 78rpx;
   border-radius: 18rpx;
-  background: #e84d64;
+  background: #ef4f5f;
   color: #fff;
   font-size: 28rpx;
 }

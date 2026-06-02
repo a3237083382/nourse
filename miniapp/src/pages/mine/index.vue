@@ -214,7 +214,7 @@ export default {
 .page {
   min-height: 100vh;
   padding: 0 24rpx 148rpx;
-  background: linear-gradient(180deg, #ffe2e0 0, #fff7f5 178rpx, #f6f7f6 390rpx);
+  background: linear-gradient(180deg, #fff1ed 0, #fff8f4 330rpx, #f7f4ef 760rpx);
 }
 
 .profile-band {
@@ -222,8 +222,8 @@ export default {
   padding: 86rpx 24rpx 40rpx;
   background:
     radial-gradient(circle at 22% 30%, rgba(255, 255, 255, 0.92) 0 78rpx, transparent 80rpx),
-    radial-gradient(circle at 78% 20%, rgba(255, 190, 165, 0.28) 0 116rpx, transparent 118rpx),
-    linear-gradient(135deg, #ffd5d6 0%, #fff7f3 56%, #ffffff 100%);
+    radial-gradient(circle at 78% 20%, rgba(239, 79, 95, 0.12) 0 116rpx, transparent 118rpx),
+    linear-gradient(135deg, #fff1ee 0%, #fff8f4 58%, #ffffff 100%);
 }
 
 .profile-row {
@@ -242,8 +242,8 @@ export default {
   flex: 0 0 auto;
   border: 6rpx solid #fff;
   border-radius: 50%;
-  background: #fff4f2;
-  box-shadow: 0 12rpx 30rpx rgba(244, 87, 96, 0.16);
+  background: #fff7f2;
+  box-shadow: 0 12rpx 30rpx rgba(239, 79, 95, 0.14);
 }
 
 .avatar-heart {
@@ -265,7 +265,7 @@ export default {
   width: 54rpx;
   height: 54rpx;
   border-radius: 50%;
-  background: #ff7b7d;
+  background: #ef4f5f;
   content: '';
 }
 
@@ -286,7 +286,7 @@ export default {
 
 .nickname {
   display: block;
-  color: #20242c;
+  color: #222832;
   font-size: 38rpx;
   font-weight: 900;
   line-height: 1.2;
@@ -305,7 +305,7 @@ export default {
   line-height: 56rpx;
   margin: 18rpx 0 0;
   border-radius: 999rpx;
-  background: #ff4f5e;
+  background: #ef4f5f;
   color: #fff;
   font-size: 24rpx;
   font-weight: 800;
@@ -319,8 +319,8 @@ export default {
   justify-content: center;
   gap: 10rpx;
   flex: 0 0 auto;
-  border-radius: 999rpx 0 0 999rpx;
-  background: linear-gradient(135deg, #ff9a77, #ff5966);
+  border-radius: 999rpx;
+  background: linear-gradient(135deg, #ff9478, #ef4f5f);
   color: #fff;
   font-size: 27rpx;
   font-weight: 800;
@@ -336,9 +336,10 @@ export default {
 
 .order-card,
 .menu-card {
-  border-radius: 10rpx;
+  border: 1rpx solid #f3e5dc;
+  border-radius: 16rpx;
   background: #fff;
-  box-shadow: 0 10rpx 24rpx rgba(30, 38, 48, 0.04);
+  box-shadow: 0 12rpx 28rpx rgba(80, 45, 40, 0.05);
 }
 
 .order-card {
@@ -348,7 +349,7 @@ export default {
 
 .card-title {
   display: block;
-  color: #20242c;
+  color: #222832;
   font-size: 34rpx;
   font-weight: 900;
 }
@@ -364,7 +365,7 @@ export default {
   align-items: center;
   flex-direction: column;
   gap: 14rpx;
-  color: #20242c;
+  color: #222832;
   font-size: 29rpx;
 }
 
@@ -381,11 +382,11 @@ export default {
 }
 
 .group-icon {
-  background: linear-gradient(135deg, #ff575e, #ff9b83);
+  background: linear-gradient(135deg, #ef4f5f, #ff9478);
 }
 
 .service-icon {
-  background: linear-gradient(135deg, #ff941f, #ffbd52);
+  background: linear-gradient(135deg, #d9893d, #f2c987);
 }
 
 .menu-card {
@@ -418,9 +419,9 @@ export default {
   height: 42rpx;
   align-items: center;
   justify-content: center;
-  border: 3rpx solid #161a20;
+  border: 2rpx solid #eadbd2;
   border-radius: 10rpx;
-  color: #161a20;
+  color: #643b34;
   font-size: 22rpx;
   font-weight: 900;
 }
@@ -441,12 +442,12 @@ export default {
 }
 
 .menu-title {
-  color: #20242c;
+  color: #222832;
   font-size: 29rpx;
 }
 
 .chevron {
-  color: #111820;
+  color: #b7a9a2;
   font-size: 56rpx;
   line-height: 1;
 }
@@ -456,8 +457,9 @@ export default {
   line-height: 72rpx;
   margin-top: 28rpx;
   border-radius: 999rpx;
-  background: #ffb7bb;
-  color: #fff;
+  border: 1rpx solid #ef4f5f;
+  background: #fff1ee;
+  color: #ef4f5f;
   font-size: 28rpx;
   font-weight: 800;
 }

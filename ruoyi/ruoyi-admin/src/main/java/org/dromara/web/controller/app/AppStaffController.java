@@ -45,7 +45,9 @@ public class AppStaffController {
             select s.id, s.category_id categoryId, c.name categoryName, s.name, s.avatar_url avatarUrl,
                    s.age, s.city, s.district, s.education, s.experience_years experienceYears,
                    s.salary_min salaryMin, s.salary_max salaryMax, s.salary_unit salaryUnit,
-                   s.service_desc serviceDesc, s.recommended
+                   s.service_desc serviceDesc, s.native_place nativePlace, s.height_cm heightCm,
+                   s.weight_kg weightKg, s.birth_date birthDate, s.marital_status maritalStatus,
+                   s.self_intro selfIntro, s.skills, s.verification_note verificationNote, s.recommended
             from service_staff s
             left join service_category c on c.id = s.category_id
             where
@@ -63,7 +65,9 @@ public class AppStaffController {
             select s.id, s.category_id categoryId, c.name categoryName, s.name, s.avatar_url avatarUrl,
                    s.gender, s.age, s.city, s.district, s.education, s.experience_years experienceYears,
                    s.salary_min salaryMin, s.salary_max salaryMax, s.salary_unit salaryUnit,
-                   s.service_desc serviceDesc, s.recommended
+                   s.service_desc serviceDesc, s.native_place nativePlace, s.height_cm heightCm,
+                   s.weight_kg weightKg, s.birth_date birthDate, s.marital_status maritalStatus,
+                   s.self_intro selfIntro, s.skills, s.verification_note verificationNote, s.recommended
             from service_staff s
             left join service_category c on c.id = s.category_id
             where s.id = ? and s.deleted = 0 and s.status = 'ONLINE'

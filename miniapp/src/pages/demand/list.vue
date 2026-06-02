@@ -52,7 +52,7 @@ export default {
 .page {
   min-height: 100vh;
   padding: 24rpx;
-  background: #f4f5f2;
+  background: #f7f4ef;
 }
 
 .publish {
@@ -60,7 +60,7 @@ export default {
   height: 84rpx;
   line-height: 84rpx;
   border-radius: 22rpx;
-  background: #e84d64;
+  background: #ef4f5f;
   color: #fff;
   font-size: 30rpx;
   box-shadow: 0 12rpx 26rpx rgba(232, 77, 100, 0.18);
@@ -70,7 +70,7 @@ export default {
   margin-bottom: 20rpx;
   padding: 28rpx;
   border: 1px solid rgba(31, 37, 43, 0.05);
-  border-radius: 24rpx;
+  border-radius: 16rpx;
   background: #fff;
   box-shadow: 0 12rpx 30rpx rgba(32, 38, 44, 0.05);
 }
@@ -82,7 +82,7 @@ export default {
 }
 
 .title {
-  color: #20242c;
+  color: #222832;
   font-size: 30rpx;
   font-weight: 700;
 }
@@ -105,7 +105,7 @@ export default {
 
 .empty {
   padding: 90rpx 0;
-  border-radius: 24rpx;
+  border-radius: 16rpx;
   background: #fff;
   color: #8a8f99;
   text-align: center;

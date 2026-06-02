@@ -7,7 +7,7 @@
     <view v-if="products.length === 0" class="empty">暂无团购商品</view>
     <view v-for="item in products" :key="item.id" class="product" @tap="openDetail(item.id)">
       <view class="cover">
-        <image v-if="item.coverUrl" :src="item.coverUrl" mode="aspectFill" />
+        <image v-if="validCover(item.coverUrl)" :src="item.coverUrl" mode="aspectFill" />
         <text v-else>{{ item.title.slice(0, 2) }}</text>
       </view>
       <view class="info">
@@ -58,6 +58,10 @@ export default {
     money(value) {
       return Number(value || 0).toFixed(2).replace(/\.00$/, '')
     },
+    validCover(value) {
+      const url = String(value || '')
+      return !!url && !url.includes('/static/logo.png')
+    },
     groupMeta(item) {
       const seconds = this.remainingSeconds(item.activeTeamExpireAt)
       if (seconds > 0) {
@@ -85,13 +89,15 @@ export default {
 .page {
   min-height: 100vh;
   padding: 24rpx;
-  background: #f4f5f2;
+  background: linear-gradient(180deg, #fff1ed 0, #fff8f4 300rpx, #f7f4ef 720rpx);
 }
 
 .hero {
   padding: 34rpx;
-  border-radius: 28rpx;
-  background: #20252b;
+  border: 1rpx solid #ffe1d7;
+  border-radius: 16rpx;
+  background: linear-gradient(135deg, #ef4f5f 0%, #ff9478 62%, #ffe2c8 100%);
+  box-shadow: 0 16rpx 34rpx rgba(176, 70, 78, 0.16);
 }
 
 .title,
@@ -119,9 +125,10 @@ export default {
   gap: 22rpx;
   margin-top: 22rpx;
   padding: 24rpx;
-  border-radius: 24rpx;
+  border: 1rpx solid #f3e5dc;
+  border-radius: 16rpx;
   background: #fff;
-  box-shadow: 0 12rpx 30rpx rgba(32, 38, 44, 0.05);
+  box-shadow: 0 12rpx 28rpx rgba(80, 45, 40, 0.05);
 }
 
 .empty {
@@ -138,8 +145,8 @@ export default {
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  border-radius: 20rpx;
-  background: linear-gradient(135deg, #e84d64, #f3b35b);
+  border-radius: 16rpx;
+  background: linear-gradient(135deg, #ef4f5f, #f6a05f);
   color: #fff;
   font-size: 34rpx;
   font-weight: 800;
@@ -157,7 +164,7 @@ export default {
 }
 
 .name {
-  color: #20242c;
+  color: #222832;
   font-size: 30rpx;
   font-weight: 700;
 }
@@ -176,7 +183,7 @@ export default {
 }
 
 .price {
-  color: #e84d64;
+  color: #ef4f5f;
   font-size: 34rpx;
   font-weight: 800;
 }

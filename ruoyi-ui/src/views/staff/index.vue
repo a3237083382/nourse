@@ -152,6 +152,35 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
+                <el-form-item label="籍贯">
+                  <el-input v-model="form.nativePlace" placeholder="例如：湖南长沙" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="身高">
+                  <el-input-number v-model="form.heightCm" :min="0" controls-position="right" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="体重">
+                  <el-input-number v-model="form.weightKg" :min="0" controls-position="right" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="出生年月">
+                  <el-date-picker v-model="form.birthDate" value-format="YYYY-MM-DD" type="date" placeholder="请选择" style="width: 100%" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="婚姻">
+                  <el-select v-model="form.maritalStatus" clearable style="width: 100%">
+                    <el-option label="已婚" value="已婚" />
+                    <el-option label="未婚" value="未婚" />
+                    <el-option label="离异" value="离异" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
                 <el-form-item label="经验年限">
                   <el-input-number v-model="form.experienceYears" :min="0" controls-position="right" />
                 </el-form-item>
@@ -193,6 +222,21 @@
               <el-col :span="24">
                 <el-form-item label="服务说明">
                   <el-input v-model="form.serviceDesc" type="textarea" :rows="3" maxlength="300" show-word-limit />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="自我介绍">
+                  <el-input v-model="form.selfIntro" type="textarea" :rows="5" maxlength="1200" show-word-limit />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="个人技能">
+                  <el-input v-model="form.skills" type="textarea" :rows="4" maxlength="1000" show-word-limit />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="核验说明">
+                  <el-input v-model="form.verificationNote" type="textarea" :rows="3" maxlength="600" show-word-limit />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -306,11 +350,19 @@ const defaultForm = () => ({
   city: '',
   district: '',
   education: '',
+  nativePlace: '',
+  heightCm: undefined,
+  weightKg: undefined,
+  birthDate: '',
+  maritalStatus: '',
   experienceYears: 0,
   salaryMin: 0,
   salaryMax: 0,
   salaryUnit: '月',
   serviceDesc: '',
+  selfIntro: '',
+  skills: '',
+  verificationNote: '',
   status: 'DRAFT',
   recommended: false,
   sortNo: 0,

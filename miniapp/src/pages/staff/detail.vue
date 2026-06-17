@@ -32,7 +32,13 @@
       <scroll-view scroll-x class="cert-scroll">
         <view class="cert-row">
           <view v-for="item in certificateList" :key="item.id || item.certificateName" class="cert-card">
-            <image v-if="validImage(item.fileUrl)" class="cert-image" :src="item.fileUrl" mode="aspectFill" />
+            <image
+              v-if="validImage(item.fileUrl)"
+              class="cert-image"
+              :src="item.fileUrl"
+              mode="aspectFill"
+              @tap="previewCertificate(item.fileUrl)"
+            />
             <view v-else class="cert-fallback">
               <text>{{ item.certificateName }}</text>
             </view>
@@ -98,7 +104,14 @@
       </view>
       <scroll-view scroll-x>
         <view class="photo-row">
-          <image v-for="item in displayPhotos" :key="item.id || item.photoUrl" class="photo" :src="item.photoUrl" mode="aspectFill" />
+          <image
+            v-for="item in displayPhotos"
+            :key="item.id || item.photoUrl"
+            class="photo"
+            :src="item.photoUrl"
+            mode="aspectFill"
+            @tap="previewPhoto(item.photoUrl)"
+          />
         </view>
       </scroll-view>
     </view>
@@ -197,8 +210,14 @@ export default {
     certificateList() {
       return (this.staff && this.staff.certificates) || []
     },
+    certificateImages() {
+      return this.certificateList.map((item) => item.fileUrl).filter((url) => this.validImage(url))
+    },
     displayPhotos() {
       return ((this.staff && this.staff.photos) || []).filter((item) => this.validImage(item.photoUrl))
+    },
+    photoImages() {
+      return this.displayPhotos.map((item) => item.photoUrl)
     },
     experienceList() {
       return (this.staff && this.staff.experiences) || []
@@ -249,6 +268,20 @@ export default {
     openInterview() {
       const query = this.demandId ? `?staffId=${this.id}&demandId=${this.demandId}` : `?staffId=${this.id}`
       uni.navigateTo({ url: `/pages/interview/form${query}` })
+    },
+    previewCertificate(url) {
+      this.previewImages(url, this.certificateImages)
+    },
+    previewPhoto(url) {
+      this.previewImages(url, this.photoImages)
+    },
+    previewImages(current, urls) {
+      const list = (urls || []).filter((url) => this.validImage(url))
+      if (!list.length) return
+      uni.previewImage({
+        current,
+        urls: list,
+      })
     },
     money(value) {
       if (value === null || value === undefined || value === '') return '0'

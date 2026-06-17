@@ -20,6 +20,13 @@
       }
     },
     {
+      "path": "pages/staff/category",
+      "style": {
+        "navigationBarTitleText": "服务人员",
+        "onReachBottomDistance": 80
+      }
+    },
+    {
       "path": "pages/staff/detail",
       "style": {
         "navigationBarTitleText": "阿姨详情"

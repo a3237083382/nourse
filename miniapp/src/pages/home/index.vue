@@ -175,12 +175,8 @@ export default {
       }
     },
     openCategory(item) {
-      const staffCategory = this.staffCategories.find((category) => category.id === item.id)
-      if (staffCategory) {
-        this.selectCategory(staffCategory)
-        return
-      }
-      uni.navigateTo({ url: `/pages/demand/form?categoryId=${item.id}` })
+      const categoryName = encodeURIComponent(item.name || '')
+      uni.navigateTo({ url: `/pages/staff/category?categoryId=${item.id}&categoryName=${categoryName}` })
     },
     selectCategory(item) {
       this.activeCategoryId = item.id
